@@ -1,0 +1,22 @@
+{
+  "name": "idle",
+  "version": "0.0.0",
+  "description": "An idle game",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TsarAugustus/Idle.git"
+  },
+  "author": "TsarAugustus",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TsarAugustus/Idle/issues"
+  },
+  "homepage": "https://github.com/TsarAugustus/Idle#readme",
+  "dependencies": {
+    "http-server": "^0.12.3"
+  }
+}
