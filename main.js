@@ -15,6 +15,8 @@ let Game = {
       (function(index) {
         //When button is clicked, fire the Game.eventUpgrade function
         buttons[index].onclick = function() {
+          // console.log(buttons[index].name)
+          console.log(buttons[index].name)
           Game.eventUpgrade(buttons[index].name);
         }
         //Hide the buttons
@@ -43,7 +45,7 @@ let Game = {
   forage: function() {
     const basicResources = Player.basicResources;
     const randomItem = basicResources[Math.floor(Math.random() * basicResources.length)];
-    const divList = document.getElementById('resources').querySelectorAll('span');
+    const divList = document.getElementById('basicResources').querySelectorAll('span');
 
     //For loop that iterates through the resources, updates how many are in Player
     //Then update
@@ -71,7 +73,6 @@ let Game = {
     const findResourcesVsEvent = function(event) {
       //Finds # of required materials for event
       const eventAmt = Object.keys(findEvent(event).required[0]);
-
       //Holds an array of true/falses.
       //Any falses lead to the evaluation being failed
       let eventEvaluation = [];
@@ -130,11 +131,10 @@ let Game = {
     //If theres no events, do something
     //TODO: Generate random events after game completion
     if(!Events[0]) {
-
+      console.log('No events')
     } else {
       //gets the requirements
       const req = Events[0].required[0];
-
       for (var i = 0; i < Player.basicResources.length; i++) {
         for(var j = 0; j < Object.values(req).length; j++) {
           if(Object.keys(req)[j] === Player.basicResources[i].name) {
@@ -145,12 +145,11 @@ let Game = {
           }
         }
       }
-
-      let divList = document.getElementById('resources').querySelectorAll('span');
-      for (var i = 0; i < Player.basicResources.length; i++) {
-        if(divList[i].id === Player.basicResources[i].name) {
-          divList[i].innerHTML = Player.basicResources[i].amount;
-        }
+    }
+    let divList = document.getElementById('basicResources').querySelectorAll('span');
+    for (var i = 0; i < Player.basicResources.length; i++) {
+      if(divList[i].id === Player.basicResources[i].name) {
+        divList[i].innerHTML = Player.basicResources[i].amount;
       }
     }
   }

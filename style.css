@@ -1,0 +1,29 @@
+* {
+  margin: 0;
+}
+body {
+  display: flex;
+  /* flex-direction: row; */
+}
+#resourceAndEvent {
+  flex-direction: column;
+  width: 30%;
+  border: 1px solid black;
+}
+#oneTimeEvents {
+  border: 1px solid black;
+}
+#gameArea {
+  width: 30%;
+  border: 1px solid black;
+  text-align: center;
+  padding-top: 30%;
+}
+
+#basicResources {
+  border: 1px solid black;
+}
+
+#upgrades {
+  width: 30%;
+}
