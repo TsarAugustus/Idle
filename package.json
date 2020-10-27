@@ -4,7 +4,7 @@
   "description": "An idle game",
   "main": "main.js",
   "scripts": {
-    "start": "node main.js"
+    "start": "http-server main.js"
   },
   "repository": {
     "type": "git",

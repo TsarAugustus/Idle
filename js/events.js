@@ -1,9 +1,9 @@
-export let events = [{
+export let Events = [{
   'name': 'createFire',
   'isEventComplete': false,
   'required': [{
-    'wood': 5,
-    'stone': 5
+    'wood': 10,
+    'stone': 0
   }]
 }, {
   'name': 'createHouse',
