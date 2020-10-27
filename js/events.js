@@ -15,4 +15,13 @@ export let Events = [{
     'stone': 30
   }],
   'desc': 'Create a House'
+}, {
+  'name': 'createRainwaterBarrel',
+  'isEventComplete': false,
+  'required':[{
+    'wood': 10,
+    'stone': 10,
+    'leaves': 10
+  }],
+  'desc': 'Create Rainwater Barrel'
 }]

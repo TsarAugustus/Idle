@@ -6,5 +6,8 @@ export let Player = {
   }, {
     'name': 'stone',
     'amount': 34
+  }, {
+    'name': 'leaves',
+    'amount': 0
   }]
 }
