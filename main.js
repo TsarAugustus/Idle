@@ -27,15 +27,17 @@ let Game = {
         for(let j = 0; j < Events.length; j++) {
           if(buttons[index].name === Events[j].name) {
             let nameValue = [];
+            nameValue.push(Object.values(Events[j])[3])
             for(let k = 0; k < Object.keys(Events[j].required[0]).length; k++) {
-              let name = Object.keys(Events[j].required[0])[k];
+              let name = Object.keys(Events[j].required[0])[k].charAt(0).toUpperCase() + Object.keys(Events[j].required[0])[k].slice(1);
               let cost = Object.values(Events[j].required[0])[k];
               nameValue.push(name + ': ' + cost)
             }
 
+
             //VERY hacky?
             //TODO: make this better
-            buttons[index].innerHTML = nameValue;
+            buttons[index].innerHTML = nameValue.join("<br>");
           }
         }
       })(i)
