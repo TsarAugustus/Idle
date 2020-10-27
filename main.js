@@ -1,17 +1,10 @@
+//Import modules.
 import { Events } from "./js/events.js";
 import { Player } from "./js/Player.js"
 
 let Game = {
-  eventPercent: [{
-    'name': 'createFire',
-    'amt': {
-      'wood': 5,
-      'stone': 0
-    }
-  }],
   init: function() {
     //Initializations
-
     let buttons = document.getElementsByClassName('button');
     let forage = document.getElementById('forage').onclick = function() {
       Game.forage();
@@ -20,10 +13,14 @@ let Game = {
     //Might be better to fire the onclick function somewhere else, reduce callback hell
     for (var i = 0; i < buttons.length; i++) {
       (function(index) {
+        //When button is clicked, fire the Game.eventUpgrade function
         buttons[index].onclick = function() {
           Game.eventUpgrade(buttons[index].name);
         }
+        //Hide the buttons
         buttons[index].style.display = "none";
+
+        //For loop. Goes through the # of Events, then dynamically assigns the name/value of them on the buttons
         for(let j = 0; j < Events.length; j++) {
           if(buttons[index].name === Events[j].name) {
             let nameValue = [];
@@ -33,8 +30,6 @@ let Game = {
               let cost = Object.values(Events[j].required[0])[k];
               nameValue.push(name + ': ' + cost)
             }
-
-
             //VERY hacky?
             //TODO: make this better
             buttons[index].innerHTML = nameValue.join("<br>");
@@ -47,8 +42,8 @@ let Game = {
   //Then it updates that resources span in the divList
   forage: function() {
     const basicResources = Player.basicResources;
-    let randomItem = basicResources[Math.floor(Math.random() * basicResources.length)];
-    let divList = document.getElementById('resources').querySelectorAll('span');
+    const randomItem = basicResources[Math.floor(Math.random() * basicResources.length)];
+    const divList = document.getElementById('resources').querySelectorAll('span');
 
     //For loop that iterates through the resources, updates how many are in Player
     //Then update
@@ -60,8 +55,10 @@ let Game = {
         }
       }
     }
+    //Game update to update resources
     Game.update();
   },
+  //eventUpgrade function. Takes buttons name, then finds the corresponding Event
   eventUpgrade: function(buttonName) {
     const findEvent = function(eventName) {
       for (var i = 0; i < Events.length; i++) {
@@ -70,25 +67,36 @@ let Game = {
         }
       }
     }
-    const findResourcesVsEvent = function(event) {
-      const eventAmt = Object.keys(findEvent(event).required[0]);
-      let eventStuff = [];
 
+    const findResourcesVsEvent = function(event) {
+      //Finds # of required materials for event
+      const eventAmt = Object.keys(findEvent(event).required[0]);
+
+      //Holds an array of true/falses.
+      //Any falses lead to the evaluation being failed
+      let eventEvaluation = [];
+
+      //For loop, first measures how many materials are needed for the event
+      //Then checks how many resouces the player has
+      //Then finally evaluates if the player has enough materials to perform the event
+      //Evaluation is submitted into array, then evalued again in IF statement @line 96
       for (var i = 0; i < eventAmt.length; i++) {
         for(var j = 0; j < Player.basicResources.length; j++) {
           if(eventAmt[i] === Player.basicResources[j].name) {
             if(Object.values(findEvent(event).required[0])[i] <= Player.basicResources[j].amount) {
-              eventStuff.push(true);
+              eventEvaluation.push(true);
             } else {
-              eventStuff.push(false);
+              eventEvaluation.push(false);
             }
           }
         }
       }
 
-      // eventStuff.includes(false)) //evaluates if eventStuff has 'false' in it, if it does , returns true
-      if(!eventStuff.includes(false)) {
+      // eventEvaluation.includes(false)) //evaluates if eventEvaluation has 'false' in it, if it does , returns true
+      if(!eventEvaluation.includes(false)) {
         //holy shit this took forever to figure out
+        //Double For loop. Probably redundant.
+        //TODO: Use .filter() or ES6 stuff to remove loop
         for (var i = 0; i < eventAmt.length; i++) {
           for(var j = 0; j < Player.basicResources.length; j++) {
             if(eventAmt[i] === Player.basicResources[j].name) {
@@ -96,44 +104,53 @@ let Game = {
             }
           }
         }
+        //Flag event. Probably redundant since event is removed?
+        //TODO: Fix redundancy
         let eventFlag = findEvent(event)
         eventFlag.isEventComplete = true;
       }
     }
 
+    //This bit is necessary to remove the button from the game.
     findResourcesVsEvent(buttonName);
     Game.update();
   },
   update: function() {
     //check flags
+    //Currently removes the event when completed. Maybe transferring it elsewhere to track it would be better
     for (var i = 0; i < Events.length; i++) {
       if(Events[i].isEventComplete === true) {
         const docName = document.getElementsByName(Object.values(Events[0])[0]);
         docName[0].style.display = "none";
-        console.log(docName[0])
 
         //removes the most recent event
         Events.shift();
       }
     }
-    //gets the requirements
-    const req = Events[0].required[0];
-    for (var i = 0; i < Player.basicResources.length; i++) {
-      for(var j = 0; j < Object.values(req).length; j++) {
-        if(Object.keys(req)[j] === Player.basicResources[i].name) {
-          console.log(Events[0])
-          if((Player.basicResources[i].amount/Object.values(req)[j]) >= 0.5) {
-            const docName = document.getElementsByName(Object.values(Events[0])[0]);
-            docName[0].style.display = 'block';
+    //If theres no events, do something
+    //TODO: Generate random events after game completion
+    if(!Events[0]) {
+
+    } else {
+      //gets the requirements
+      const req = Events[0].required[0];
+
+      for (var i = 0; i < Player.basicResources.length; i++) {
+        for(var j = 0; j < Object.values(req).length; j++) {
+          if(Object.keys(req)[j] === Player.basicResources[i].name) {
+            if((Player.basicResources[i].amount/Object.values(req)[j]) >= 0.5) {
+              const docName = document.getElementsByName(Object.values(Events[0])[0]);
+              docName[0].style.display = 'block';
+            }
           }
         }
       }
-    }
 
-    let divList = document.getElementById('resources').querySelectorAll('span');
-    for (var i = 0; i < Player.basicResources.length; i++) {
-      if(divList[i].id === Player.basicResources[i].name) {
-        divList[i].innerHTML = Player.basicResources[i].amount;
+      let divList = document.getElementById('resources').querySelectorAll('span');
+      for (var i = 0; i < Player.basicResources.length; i++) {
+        if(divList[i].id === Player.basicResources[i].name) {
+          divList[i].innerHTML = Player.basicResources[i].amount;
+        }
       }
     }
   }
