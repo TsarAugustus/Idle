@@ -2,7 +2,13 @@ import { Events } from "./js/events.js";
 import { Player } from "./js/Player.js"
 
 let Game = {
-  eventButtons: [],
+  eventPercent: [{
+    'name': 'createFire',
+    'amt': {
+      'wood': 5,
+      'stone': 0
+    }
+  }],
   init: function() {
     //Initializations
 
@@ -16,6 +22,21 @@ let Game = {
       (function(index) {
         buttons[index].onclick = function() {
           Game.eventUpgrade(buttons[index].name);
+        }
+        buttons[index].style.display = "none";
+        for(let j = 0; j < Events.length; j++) {
+          if(buttons[index].name === Events[j].name) {
+            let nameValue = [];
+            for(let k = 0; k < Object.keys(Events[j].required[0]).length; k++) {
+              let name = Object.keys(Events[j].required[0])[k];
+              let cost = Object.values(Events[j].required[0])[k];
+              nameValue.push(name + ': ' + cost)
+            }
+
+            //VERY hacky?
+            //TODO: make this better
+            buttons[index].innerHTML = nameValue;
+          }
         }
       })(i)
     }
@@ -33,10 +54,11 @@ let Game = {
       if(Player.basicResources[i].name === randomItem.name) {
         Player.basicResources[i].amount++;
         if(randomItem.name === divList[i].id) {
-          console.log(divList[i].innerHTML = basicResources[i].amount)
+          divList[i].innerHTML = basicResources[i].amount
         }
       }
     }
+    Game.update();
   },
   eventUpgrade: function(buttonName) {
     const findEvent = function(eventName) {
@@ -46,8 +68,6 @@ let Game = {
         }
       }
     }
-    // console.log(Object.keys(findEvent(buttonName).required[0]));
-    // console.log(Player.basicResources[0])
     const findResourcesVsEvent = function(event) {
       const eventAmt = Object.keys(findEvent(event).required[0]);
       let eventStuff = [];
@@ -64,23 +84,50 @@ let Game = {
         }
       }
 
-      // console.log('available materials?: ' + eventStuff.includes(false)) //evaluates if eventStuff has 'false' in it, if it does , returns true
+      // eventStuff.includes(false)) //evaluates if eventStuff has 'false' in it, if it does , returns true
       if(!eventStuff.includes(false)) {
         //holy shit this took forever to figure out
         for (var i = 0; i < eventAmt.length; i++) {
           for(var j = 0; j < Player.basicResources.length; j++) {
             if(eventAmt[i] === Player.basicResources[j].name) {
-              console.log(Player.basicResources[j].amount - Object.values(findEvent(event).required[0])[i])
               Player.basicResources[j].amount = Player.basicResources[j].amount - Object.values(findEvent(event).required[0])[i];
             }
           }
         }
+        let eventFlag = findEvent(event)
+        eventFlag.isEventComplete = true;
       }
     }
+
     findResourcesVsEvent(buttonName);
     Game.update();
   },
   update: function() {
+    //check flags
+    for (var i = 0; i < Events.length; i++) {
+      if(Events[i].isEventComplete === true) {
+        const docName = document.getElementsByName(Object.values(Events[0])[0]);
+        docName[0].style.display = "none";
+        console.log(docName[0])
+
+        //removes the most recent event
+        Events.shift();
+      }
+    }
+    //gets the requirements
+    const req = Events[0].required[0];
+    for (var i = 0; i < Player.basicResources.length; i++) {
+      for(var j = 0; j < Object.values(req).length; j++) {
+        if(Object.keys(req)[j] === Player.basicResources[i].name) {
+          console.log(Events[0])
+          if((Player.basicResources[i].amount/Object.values(req)[j]) >= 0.5) {
+            const docName = document.getElementsByName(Object.values(Events[0])[0]);
+            docName[0].style.display = 'block';
+          }
+        }
+      }
+    }
+
     let divList = document.getElementById('resources').querySelectorAll('span');
     for (var i = 0; i < Player.basicResources.length; i++) {
       if(divList[i].id === Player.basicResources[i].name) {

@@ -3,7 +3,7 @@ export let Events = [{
   'isEventComplete': false,
   'required': [{
     'wood': 10,
-    'stone': 0
+    'stone': 5
   }]
 }, {
   'name': 'createHouse',
