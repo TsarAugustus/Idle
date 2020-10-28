@@ -21,14 +21,18 @@ export let Game = {
         //When button is clicked, fire the Game.eventUpgrade function
         buttons[index].onclick = function() {
           Game.eventUpgrade(buttons[index].name);
-          if(buttons[index].name === 'createFire') {
-            //Had a bug where fireLife wasn't appearing until tick function
-            document.getElementById("fireLife").innerHTML = 'Fire: ' + Fire.fireLifeNum + '%';
-            Game.fireIsLit = true;
-          }
-          if(buttons[index].name === 'createRainwaterBarrel') {
-            document.getElementById("water").innerHTML = 'Water: ' + Water.waterNum + '%';
-            Game.foundWater = true;
+
+          //Received an error if buttons[index] wasn't evaluated
+          if(buttons[index] != undefined) {
+            if(buttons[index].name === 'createFire') {
+              //Had a bug where fireLife wasn't appearing until tick function
+              document.getElementById("fireLife").innerHTML = 'Fire: ' + Fire.fireLifeNum + '%';
+              Game.fireIsLit = true;
+            }
+            if(buttons[index].name === 'createRainwaterBarrel') {
+              document.getElementById("water").innerHTML = 'Water: ' + Water.waterNum + '%';
+              Game.foundWater = true;
+            }
           }
         }
         //Hide the buttons
@@ -171,15 +175,15 @@ export let Game = {
   tick: function() {
     Game.update();
     const fireLifeDoc = document.getElementById("fireLife");
-    if(Game.fireIsLit != true) {
-      document.getElementById('water').style.visibility = 'none'
-    } else if(Game.foundWater != true) {
-      document.getElementById("fireLife").style.visibility = "none";
-    } else {
+
+    //tick logic for fire. Need to display fire with inner.html here is redundant,
+    //since onclick makes fire a block. Very handy
+    if(Game.fireIsLit) {
+      let totalFireLife;
       if(Fire.fireLifeNum <= 0) {
-        fireLifeDoc.innerHTML = 'Fire: ' + 0 + '%'
+        Fire.fireLifeNum = 0;
+        fireLifeDoc.innerHTML = 'Fire: ' + Fire.fireLifeNum + '%';
       } else {
-        let totalFireLife;
         totalFireLife = Fire.fireLifeNum - Fire.fireDecay;
         Fire.fireLifeNum = Math.round(totalFireLife * 10) / 10;
         fireLifeDoc.innerHTML = 'Fire: ' + Fire.fireLifeNum + '%';
