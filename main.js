@@ -6,6 +6,9 @@ import { Fire } from "./js/Fire.js";
 
 export let Game = {
   init: function() {
+    Game.fireIsLit = false;
+    Game.foundWater = false;
+    setInterval(Game.tick, 1000);
     //Initializations
     let buttons = document.getElementsByClassName('button');
     let forage = document.getElementById('forage').onclick = function() {
@@ -21,7 +24,11 @@ export let Game = {
           if(buttons[index].name === 'createFire') {
             //Had a bug where fireLife wasn't appearing until tick function
             document.getElementById("fireLife").innerHTML = 'Fire: ' + Fire.fireLifeNum + '%';
-            setInterval(Game.tick, 1000);
+            Game.fireIsLit = true;
+          }
+          if(buttons[index].name === 'createRainwaterBarrel') {
+            document.getElementById("water").innerHTML = 'Water: ' + Water.waterNum + '%';
+            Game.foundWater = true;
           }
         }
         //Hide the buttons
@@ -122,11 +129,6 @@ export let Game = {
     Game.update();
   },
   update: function() {
-    if(Events[0] === undefined || Events[0].name != 'createFire') {
-      document.getElementById("fireLife").style.visibility = "block";
-    } else {
-      document.getElementById("fireLife").style.visibility = "none";
-    }
     //check flags
     //Currently removes the event when completed. Maybe transferring it elsewhere to track it would be better
     for (var i = 0; i < Events.length; i++) {
@@ -141,7 +143,8 @@ export let Game = {
     //If theres no events, do something
     //TODO: Generate random events after game completion
     if(!Events[0]) {
-      console.log('No events')
+      document.getElementById("oneTimeEvents").innerHTML = "<h2> No events left </h2>"
+      console.log('No events');
     } else {
       //gets the requirements
       const req = Events[0].required[0];
@@ -166,14 +169,21 @@ export let Game = {
   //The game tick will control the updates on the screen for the Fire and Water.
   //Game tick is initiated by createFire Event, through Fire.js module
   tick: function() {
+    Game.update();
     const fireLifeDoc = document.getElementById("fireLife");
-    if(Fire.fireLifeNum <= 0) {
-      fireLifeDoc.innerHTML = 'Fire: ' + 0 + '%'
+    if(Game.fireIsLit != true) {
+      document.getElementById('water').style.visibility = 'none'
+    } else if(Game.foundWater != true) {
+      document.getElementById("fireLife").style.visibility = "none";
     } else {
-      let totalFireLife;
-      totalFireLife = Fire.fireLifeNum - Fire.fireDecay;
-      Fire.fireLifeNum = Math.round(totalFireLife * 10) / 10;
-      fireLifeDoc.innerHTML = 'Fire: ' + Fire.fireLifeNum + '%';
+      if(Fire.fireLifeNum <= 0) {
+        fireLifeDoc.innerHTML = 'Fire: ' + 0 + '%'
+      } else {
+        let totalFireLife;
+        totalFireLife = Fire.fireLifeNum - Fire.fireDecay;
+        Fire.fireLifeNum = Math.round(totalFireLife * 10) / 10;
+        fireLifeDoc.innerHTML = 'Fire: ' + Fire.fireLifeNum + '%';
+      }
     }
   }
 }
