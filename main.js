@@ -14,6 +14,10 @@ export let Game = {
     let forage = document.getElementById('forage').onclick = function() {
       Game.forage();
     }
+    let stoke = document.getElementById('stoke').onclick = function() {
+      Game.stoke();
+    }
+    document.getElementById('stoke').style.display = 'none';
     //attaches an onclick function to eveery event button.
     //Might be better to fire the onclick function somewhere else, reduce callback hell
     for (var i = 0; i < buttons.length; i++) {
@@ -21,19 +25,6 @@ export let Game = {
         //When button is clicked, fire the Game.eventUpgrade function
         buttons[index].onclick = function() {
           Game.eventUpgrade(buttons[index].name);
-
-          //Received an error if buttons[index] wasn't evaluated
-          if(buttons[index] != undefined) {
-            if(buttons[index].name === 'createFire') {
-              //Had a bug where fireLife wasn't appearing until tick function
-              document.getElementById("fireLife").innerHTML = 'Fire: ' + Fire.fireLifeNum + '%';
-              Game.fireIsLit = true;
-            }
-            if(buttons[index].name === 'createRainwaterBarrel') {
-              document.getElementById("water").innerHTML = 'Water: ' + Water.waterNum + '%';
-              Game.foundWater = true;
-            }
-          }
         }
         //Hide the buttons
         buttons[index].style.display = "none";
@@ -74,6 +65,28 @@ export let Game = {
       }
     }
     //Game update to update resources
+    Game.update();
+  },
+
+  //stoke function
+  stoke: function() {
+    let playerWoodAmt;
+    playerWoodAmt = Player.basicResources[0].amount;
+    let doesPlayerHaveEnoughWood = playerWoodAmt - 10;
+
+    if(Fire.fireLifeNum < 100 && doesPlayerHaveEnoughWood >= 0) {
+      Player.basicResources[0].amount -= 10;
+      //evaluate if stoking will bring fire over 100%
+      //if so, cap it at 100%
+      let fireLifeAmt;
+      fireLifeAmt = Fire.fireLifeNum;
+      fireLifeAmt += 10;
+      if(fireLifeAmt > 100) {
+        Fire.fireLifeNum = 100;
+      } else {
+        Fire.fireLifeNum += 10;
+      }
+    }
     Game.update();
   },
   //eventUpgrade function. Takes buttons name, then finds the corresponding Event
@@ -118,6 +131,19 @@ export let Game = {
           for(var j = 0; j < Player.basicResources.length; j++) {
             if(eventAmt[i] === Player.basicResources[j].name) {
               Player.basicResources[j].amount = Player.basicResources[j].amount - Object.values(findEvent(event).required[0])[i];
+              // Received an error if buttons[index] wasn't evaluated
+              if(event != undefined) {
+                if(event === 'createFire') {
+                  //Had a bug where fireLife wasn't appearing until tick function
+                  document.getElementById("fireLife").innerHTML = 'Fire: ' + Fire.fireLifeNum + '%';
+                  document.getElementById('stoke').style.display = 'block';
+                  Game.fireIsLit = true;
+                }
+                if(event === 'createRainwaterBarrel') {
+                  document.getElementById("water").innerHTML = 'Water: ' + Water.waterNum + '%';
+                  Game.foundWater = true;
+                }
+              }
             }
           }
         }
@@ -133,6 +159,9 @@ export let Game = {
     Game.update();
   },
   update: function() {
+    if(Game.fireIsLit) {
+      document.getElementById('fireLife').innerHTML = 'Fire: ' + Fire.fireLifeNum + '%';
+    }
     //check flags
     //Currently removes the event when completed. Maybe transferring it elsewhere to track it would be better
     for (var i = 0; i < Events.length; i++) {
@@ -189,6 +218,16 @@ export let Game = {
         fireLifeDoc.innerHTML = 'Fire: ' + Fire.fireLifeNum + '%';
       }
     }
+
+    //water tick logic
+
+    //make sure water event is complete
+
+    //then make resource for drinkable water
+
+    //then make sure fire is lit and not 0
+
+    //then increment drinkable water from available water
   }
 }
 

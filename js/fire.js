@@ -4,5 +4,5 @@ import { Game } from "../main.js";
 //it might be worthwhile to merge in main.js
 export let Fire = {
   fireLifeNum: 100,
-  fireDecay: 10
+  fireDecay: 1
 }
