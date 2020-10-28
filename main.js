@@ -1,8 +1,10 @@
 //Import modules.
 import { Events } from "./js/events.js";
-import { Player } from "./js/Player.js"
+import { Player } from "./js/Player.js";
+import { Water } from "./js/Water.js"
+import { Fire } from "./js/Fire.js";
 
-let Game = {
+export let Game = {
   init: function() {
     //Initializations
     let buttons = document.getElementsByClassName('button');
@@ -15,9 +17,12 @@ let Game = {
       (function(index) {
         //When button is clicked, fire the Game.eventUpgrade function
         buttons[index].onclick = function() {
-          // console.log(buttons[index].name)
-          console.log(buttons[index].name)
           Game.eventUpgrade(buttons[index].name);
+          if(buttons[index].name === 'createFire') {
+            //Had a bug where fireLife wasn't appearing until tick function
+            document.getElementById("fireLife").innerHTML = 'Fire: ' + Fire.fireLifeNum + '%';
+            setInterval(Game.tick, 1000);
+          }
         }
         //Hide the buttons
         buttons[index].style.display = "none";
@@ -117,6 +122,11 @@ let Game = {
     Game.update();
   },
   update: function() {
+    if(Events[0] === undefined || Events[0].name != 'createFire') {
+      document.getElementById("fireLife").style.visibility = "block";
+    } else {
+      document.getElementById("fireLife").style.visibility = "none";
+    }
     //check flags
     //Currently removes the event when completed. Maybe transferring it elsewhere to track it would be better
     for (var i = 0; i < Events.length; i++) {
@@ -151,6 +161,19 @@ let Game = {
       if(divList[i].id === Player.basicResources[i].name) {
         divList[i].innerHTML = Player.basicResources[i].amount;
       }
+    }
+  },
+  //The game tick will control the updates on the screen for the Fire and Water.
+  //Game tick is initiated by createFire Event, through Fire.js module
+  tick: function() {
+    const fireLifeDoc = document.getElementById("fireLife");
+    if(Fire.fireLifeNum <= 0) {
+      fireLifeDoc.innerHTML = 'Fire: ' + 0 + '%'
+    } else {
+      let totalFireLife;
+      totalFireLife = Fire.fireLifeNum - Fire.fireDecay;
+      Fire.fireLifeNum = Math.round(totalFireLife * 10) / 10;
+      fireLifeDoc.innerHTML = 'Fire: ' + Fire.fireLifeNum + '%';
     }
   }
 }
