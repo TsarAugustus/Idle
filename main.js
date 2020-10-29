@@ -24,7 +24,7 @@ export let Game = {
       (function(index) {
         //When button is clicked, fire the Game.eventUpgrade function
         buttons[index].onclick = function() {
-          Game.eventUpgrade(buttons[index].name);
+          Game.eventUpgrade(buttons[index].name, Player.basicResources);
         }
         //Hide the buttons
         buttons[index].style.display = "none";
@@ -90,72 +90,43 @@ export let Game = {
     Game.update();
   },
   //eventUpgrade function. Takes buttons name, then finds the corresponding Event
-  eventUpgrade: function(buttonName) {
-    const findEvent = function(eventName) {
-      for (var i = 0; i < Events.length; i++) {
-        if(Events[i].name === eventName) {
-          return Events[i];
-        }
-      }
-    }
+  eventUpgrade: function(buttonName, playerResources) {
+    //First find event/required materials
+    const findEvent = Events.find(function(event) {
+      return event.name === buttonName;
+    });
 
-    const findResourcesVsEvent = function(event) {
-      //Finds # of required materials for event
-      const eventAmt = Object.keys(findEvent(event).required[0]);
-      //Holds an array of true/falses.
-      //Any falses lead to the evaluation being failed
-      let eventEvaluation = [];
-
-      //For loop, first measures how many materials are needed for the event
-      //Then checks how many resouces the player has
-      //Then finally evaluates if the player has enough materials to perform the event
-      //Evaluation is submitted into array, then evalued again in IF statement @line 96
-      for (var i = 0; i < eventAmt.length; i++) {
-        for(var j = 0; j < Player.basicResources.length; j++) {
-          if(eventAmt[i] === Player.basicResources[j].name) {
-            if(Object.values(findEvent(event).required[0])[i] <= Player.basicResources[j].amount) {
-              eventEvaluation.push(true);
-            } else {
-              eventEvaluation.push(false);
-            }
+    let playerCheckValue = [];
+    const checkPlayerResources = playerResources.find(function(playerItems) {
+      for(var eventResource in Object.keys(findEvent.required[0])) {
+        const thisName = Object.keys(findEvent.required[0])[eventResource];
+        const thisValue = Object.values(findEvent.required[0])[eventResource]
+        if(thisName === playerItems.name) {
+          if(thisValue <= playerItems.amount) {
+            playerCheckValue.push(true);
+            break;
+          } else {
+            playerCheckValue.push(false);
+            break;
           }
         }
       }
-
-      // eventEvaluation.includes(false)) //evaluates if eventEvaluation has 'false' in it, if it does , returns true
-      if(!eventEvaluation.includes(false)) {
-        //holy shit this took forever to figure out
-        //Double For loop. Probably redundant.
-        //TODO: Use .filter() or ES6 stuff to remove loop
-        for (var i = 0; i < eventAmt.length; i++) {
-          for(var j = 0; j < Player.basicResources.length; j++) {
-            if(eventAmt[i] === Player.basicResources[j].name) {
-              Player.basicResources[j].amount = Player.basicResources[j].amount - Object.values(findEvent(event).required[0])[i];
-              // Received an error if buttons[index] wasn't evaluated
-              if(event != undefined) {
-                if(event === 'createFire') {
-                  //Had a bug where fireLife wasn't appearing until tick function
-                  document.getElementById("fireLife").innerHTML = 'Fire: ' + Fire.fireLifeNum + '%';
-                  document.getElementById('stoke').style.display = 'block';
-                  Game.fireIsLit = true;
-                }
-                if(event === 'createRainwaterBarrel') {
-                  document.getElementById("water").innerHTML = 'Water: ' + Water.waterNum + '%';
-                  Game.foundWater = true;
-                }
-              }
-            }
+    });
+    if(!playerCheckValue.includes(false)) {
+      console.log('nice');
+      let removePlayerMaterials = playerResources.find(function(items) {
+        // console.log(items)
+        // console.log(Object.keys(findEvent.required[0]));
+        for(var eventItem in Object.keys(findEvent.required[0])){
+          if(Object.keys(findEvent.required[0])[eventItem] === items.name) {
+            console.log(items, Object.values(findEvent.required[0])[eventItem]);
+            items.amount = items.amount - Object.values(findEvent.required[0])[eventItem];
+            findEvent.isEventComplete = true;
+            break;
           }
         }
-        //Flag event. Probably redundant since event is removed?
-        //TODO: Fix redundancy
-        let eventFlag = findEvent(event)
-        eventFlag.isEventComplete = true;
-      }
+      });
     }
-
-    //This bit is necessary to remove the button from the game.
-    findResourcesVsEvent(buttonName);
     Game.update();
   },
   update: function() {
@@ -204,7 +175,7 @@ export let Game = {
   tick: function() {
     Game.update();
     const fireLifeDoc = document.getElementById("fireLife");
-
+    const waterDoc = document.getElementById('water');
     //tick logic for fire. Need to display fire with inner.html here is redundant,
     //since onclick makes fire a block. Very handy
     if(Game.fireIsLit) {
@@ -220,14 +191,15 @@ export let Game = {
     }
 
     //water tick logic
-
-    //make sure water event is complete
-
-    //then make resource for drinkable water
-
-    //then make sure fire is lit and not 0
-
-    //then increment drinkable water from available water
+    if(Game.foundWater) {
+      if(Fire.fireLifeNum != 0) {
+        let totalWater;
+        totalWater = Water.waterNum + Water.waterGain;
+        Water.waterNum = Math.round(totalWater * 10) / 10;
+        waterDoc.innerHTML = 'Water: ' + totalWater + '%';
+        console.log(Water)
+      }
+    }
   }
 }
 

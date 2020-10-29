@@ -1,5 +1,6 @@
 //Events should be added into this list by smallest event to largest(eg Campfire to Space station)
-
+//Events are researchable 'blueprints' for the buildings/Upgrades
+//would be wise to allow multiple events to be displayed, rather than lowest to most
 export let Events = [{
   'name': 'createFire',
   'isEventComplete': false,
