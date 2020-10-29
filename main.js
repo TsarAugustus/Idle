@@ -113,6 +113,11 @@ export let Game = {
       }
     });
     if(!playerCheckValue.includes(false)) {
+      if(findEvent.name === 'createFire') {
+        Game.fireIsLit = true;
+      } else if (findEvent.name === 'createRainwaterBarrel') {
+        Game.foundWater = true;
+      }
       console.log('nice');
       let removePlayerMaterials = playerResources.find(function(items) {
         // console.log(items)
@@ -139,7 +144,6 @@ export let Game = {
       if(Events[i].isEventComplete === true) {
         const docName = document.getElementsByName(Object.values(Events[0])[0]);
         docName[0].style.display = "none";
-
         //removes the most recent event
         Events.shift();
       }
