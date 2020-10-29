@@ -8,6 +8,7 @@ export let Game = {
   init: function() {
     Game.fireIsLit = false;
     Game.foundWater = false;
+    Game.tickAmt = 0;
     setInterval(Game.tick, 1000);
     //Initializations
     let buttons = document.getElementsByClassName('button');
@@ -115,16 +116,15 @@ export let Game = {
     if(!playerCheckValue.includes(false)) {
       if(findEvent.name === 'createFire') {
         Game.fireIsLit = true;
+        document.getElementById('stoke').style.display = "block";
       } else if (findEvent.name === 'createRainwaterBarrel') {
         Game.foundWater = true;
+        Water.rainwaterBarrelNum++;
+        document.getElementById('water').innerHTML = 'Water: ' + Water.waterNum + '%';
       }
-      console.log('nice');
       let removePlayerMaterials = playerResources.find(function(items) {
-        // console.log(items)
-        // console.log(Object.keys(findEvent.required[0]));
         for(var eventItem in Object.keys(findEvent.required[0])){
           if(Object.keys(findEvent.required[0])[eventItem] === items.name) {
-            console.log(items, Object.values(findEvent.required[0])[eventItem]);
             items.amount = items.amount - Object.values(findEvent.required[0])[eventItem];
             findEvent.isEventComplete = true;
             break;
@@ -137,6 +137,8 @@ export let Game = {
   update: function() {
     if(Game.fireIsLit) {
       document.getElementById('fireLife').innerHTML = 'Fire: ' + Fire.fireLifeNum + '%';
+    } else if (Game.foundWater) {
+      document.getElementById('water').innerHTML = 'Water: ' + Water.waterNum + '%';
     }
     //check flags
     //Currently removes the event when completed. Maybe transferring it elsewhere to track it would be better
@@ -196,14 +198,19 @@ export let Game = {
 
     //water tick logic
     if(Game.foundWater) {
-      if(Fire.fireLifeNum != 0) {
-        let totalWater;
+      //Creates water if the event to create water has been completed
+      //Water is
+      let totalWater;
+      if((Water.waterNum + Water.waterGain) > Water.waterCap) {
+        totalWater = Water.waterCap;
+        Water.waterNum = Math.round(totalWater * 10) / 10;
+      } else {
         totalWater = Water.waterNum + Water.waterGain;
         Water.waterNum = Math.round(totalWater * 10) / 10;
-        waterDoc.innerHTML = 'Water: ' + totalWater + '%';
-        console.log(Water)
       }
+      waterDoc.innerHTML = 'Water: ' + Water.waterNum + '%';
     }
+    Game.tickAmt++;
   }
 }
 
