@@ -4,6 +4,7 @@
 export let Events = [{
   'name': 'createFire',
   'isEventComplete': false,
+  'available': false,
   'required': [{
     'wood': 10,
     'stone': 5
@@ -12,17 +13,20 @@ export let Events = [{
 }, {
   'name': 'createHouse',
   'isEventComplete': false,
+  'available': false,
   'required': [{
+    'wood': 0,
     'stone': 30
   }],
   'desc': 'Create a House'
 }, {
   'name': 'createRainwaterBarrel',
   'isEventComplete': false,
+  'available': false,
   'required':[{
-    'wood': 10,
-    'stone': 10,
-    'leaves': 10
+    'wood': 20,
+    'stone': 20,
+    'leaves': 20
   }],
   'desc': 'Create Rainwater Barrel'
 }]

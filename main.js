@@ -30,22 +30,19 @@ export let Game = {
         //Hide the buttons
         buttons[index].style.display = "none";
 
-        //For loop. Goes through the # of Events, then dynamically assigns the name/value of them on the buttons
-        for(let j = 0; j < Events.length; j++) {
-          if(buttons[index].name === Events[j].name) {
-            let nameValue = [];
-            nameValue.push(Object.values(Events[j])[3])
-            for(let k = 0; k < Object.keys(Events[j].required[0]).length; k++) {
-              let name = Object.keys(Events[j].required[0])[k].charAt(0).toUpperCase() + Object.keys(Events[j].required[0])[k].slice(1);
-              let cost = Object.values(Events[j].required[0])[k];
-              nameValue.push(name + ': ' + cost)
+        let buttonHTML = []
+        const eventLoop = Events.filter(function(eventName) {
+          if(eventName.name === buttons[index].name) {
+            buttonHTML.push(eventName.desc);
+            for(var i in eventName.required[0]){
+              let name = i.charAt(0).toUpperCase() + i.slice(1);
+              let cost = eventName.required[0][i]
+              buttonHTML.push(name + ': ' + cost);
             }
-            //VERY hacky?
-            //TODO: make this better
-            buttons[index].innerHTML = nameValue.join("<br>");
+            buttons[index].innerHTML = buttonHTML.join("<br>");
           }
-        }
-      })(i)
+        });
+      })(i);
     }
   },
   //Forage function. Finds random object from basic resources that are available.
@@ -101,7 +98,7 @@ export let Game = {
     const checkPlayerResources = playerResources.find(function(playerItems) {
       for(var eventResource in Object.keys(findEvent.required[0])) {
         const thisName = Object.keys(findEvent.required[0])[eventResource];
-        const thisValue = Object.values(findEvent.required[0])[eventResource]
+        const thisValue = Object.values(findEvent.required[0])[eventResource];
         if(thisName === playerItems.name) {
           if(thisValue <= playerItems.amount) {
             playerCheckValue.push(true);
@@ -113,6 +110,7 @@ export let Game = {
         }
       }
     });
+
     if(!playerCheckValue.includes(false)) {
       if(findEvent.name === 'createFire') {
         Game.fireIsLit = true;
@@ -131,6 +129,7 @@ export let Game = {
           }
         }
       });
+      findEvent.isEventComplete = true;
     }
     Game.update();
   },
@@ -143,11 +142,13 @@ export let Game = {
     //check flags
     //Currently removes the event when completed. Maybe transferring it elsewhere to track it would be better
     for (var i = 0; i < Events.length; i++) {
+      if(Events[i].available === true) {
+        document.getElementById(Events[i].name).style.display = "block";
+      }
+
       if(Events[i].isEventComplete === true) {
-        const docName = document.getElementsByName(Object.values(Events[0])[0]);
-        docName[0].style.display = "none";
-        //removes the most recent event
-        Events.shift();
+        let name = Events[i].name;
+        document.getElementById(name).style.display = "none";
       }
     }
     //If theres no events, do something
@@ -156,18 +157,16 @@ export let Game = {
       document.getElementById("oneTimeEvents").innerHTML = "<h2> No events left </h2>"
       console.log('No events');
     } else {
-      //gets the requirements
-      const req = Events[0].required[0];
-      for (var i = 0; i < Player.basicResources.length; i++) {
-        for(var j = 0; j < Object.values(req).length; j++) {
-          if(Object.keys(req)[j] === Player.basicResources[i].name) {
-            if((Player.basicResources[i].amount/Object.values(req)[j]) >= 0.5) {
-              const docName = document.getElementsByName(Object.values(Events[0])[0]);
-              docName[0].style.display = 'block';
+        const checkEvent = Events.filter(function(eventName) {
+          for(var resource in Player.basicResources) {
+            if(Object.keys(eventName.required[0])[resource] !== undefined && Object.keys(eventName.required[0])[resource] === Player.basicResources[resource].name) {
+              let testNum = Object.values(eventName.required[0])[resource] / Player.basicResources[resource].amount;
+              if(testNum !== Infinity && testNum <= 2) {
+                eventName.available = true;
+              }
             }
           }
-        }
-      }
+        });
     }
     let divList = document.getElementById('basicResources').querySelectorAll('span');
     for (var i = 0; i < Player.basicResources.length; i++) {

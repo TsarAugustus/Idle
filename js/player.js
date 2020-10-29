@@ -2,12 +2,12 @@ export let Player = {
   //Basic resources from foraging
   basicResources: [{
     'name': 'wood',
-    'amount': 100
+    'amount': 0
   }, {
     'name': 'stone',
-    'amount': 100
+    'amount': 0
   }, {
     'name': 'leaves',
-    'amount': 100
+    'amount': 0
   }]
 }
