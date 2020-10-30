@@ -20,17 +20,28 @@ export let Game = {
 
     Game.fireIsLit = false;
     Game.foundWater = false;
+    Game.foundPeople = false;
+    Game.currentFocus;
     Game.tickAmt = 0;
     setInterval(Game.tick, 1000);
     //Initializations
+    document.getElementById('cleanWaterWrap').style.display = "none";
+    document.getElementById('stoke').style.display = 'none';
     let buttons = document.getElementsByClassName('button');
     let forage = document.getElementById('forage').onclick = function() {
-      Game.forage();
+      Game.focus(event.target.id)
     }
     let stoke = document.getElementById('stoke').onclick = function() {
       Game.stoke();
     }
-    document.getElementById('stoke').style.display = 'none';
+
+    document.getElementById("craftCleanWater").onclick = function(event) {
+      Game.focus(event.target.id);
+    }
+
+    document.getElementById("craftWoodPlanks").onclick = function(event) {
+      Game.focus(event.target.id);
+    }
     //attaches an onclick function to eveery event button.
     //Might be better to fire the onclick function somewhere else, reduce callback hell
     for (var i = 0; i < buttons.length; i++) {
@@ -57,6 +68,17 @@ export let Game = {
       })(i);
     }
   },
+  focus: function(focusName) {
+    if(focusName === 'forage') {
+      Game.currentFocus = focusName;
+    } else if (focusName === 'craftCleanWater') {
+      Game.currentFocus = focusName;
+    } else if (focusName === 'craftWoodPlanks') {
+      Game.currentFocus = focusName;
+    }
+
+
+  },
   //Forage function. Finds random object from basic resources that are available.
   //Then it updates that resources span in the divList
   forage: function() {
@@ -75,7 +97,7 @@ export let Game = {
       }
     }
     //Game update to update resources
-    Game.update();
+    // Game.update();
   },
 
   //stoke function
@@ -130,6 +152,7 @@ export let Game = {
       } else if (findEvent.name === 'createRainwaterBarrel') {
         Game.foundWater = true;
         Water.rainwaterBarrelNum++;
+        document.getElementById('cleanWaterWrap').style.display = "block";
         document.getElementById('water').innerHTML = 'Water: ' + Water.waterNum + '%';
       }
       let removePlayerMaterials = playerResources.find(function(items) {
@@ -146,11 +169,22 @@ export let Game = {
     Game.update();
   },
   update: function() {
+    if(Game.currentFocus && Game.currentFocus === 'forage') {
+      Game.forage();
+    }
+    for(var resource in Player.accumulatedResources) {
+      console.log()
+      if(Player.accumulatedResources[resource].name === 'woodPlanks') {
+        document.getElementById('woodPlanks').innerHTML = Player.accumulatedResources[resource].amount;
+      }
+    }
+    //This bit is necessary when the stoke function is passed
     if(Game.fireIsLit) {
       document.getElementById('fireLife').innerHTML = 'Fire: ' + Fire.fireLifeNum + '%';
     } else if (Game.foundWater) {
       document.getElementById('water').innerHTML = 'Water: ' + Water.waterNum + '%';
     }
+
     //check flags
     //Currently removes the event when completed. Maybe transferring it elsewhere to track it would be better
     for (var i = 0; i < Events.length; i++) {
@@ -188,37 +222,38 @@ export let Game = {
     }
   },
   checkNotifications: function() {
-    //this will check the notifcations
+    //this will check the notifcations and update them if any are available
     const notifcationDiv = document.getElementById('notifications');
     let notif = Notifications.intro;
+
+    //Every 10 seconds(calculated from tick, 10 seconds is the animation speed of the notifcations css)
     if((Game.tickAmt % 10) === 0) {
+      //Empty container for pushing true/false into
       let notifCheck = [];
-      let notifName;
       const check = notif.filter(function(nextNotifcation) {
-        console.log('Start of filter')
         for(var flag in nextNotifcation.flagRequirements) {
-          console.log('Start of for loop, iteration: ' + flag);
+          //shorthand
           let thisFlag = nextNotifcation.flagRequirements[flag];
 
           if(thisFlag === '!fireIsLit' && Game.fireIsLit === false) {
             notifcationDiv.innerHTML = nextNotifcation.desc;
           }
 
+          //Check if any of these tags are true.
+          //Some notifications require events to not be completed.
           if(thisFlag === "fireIsLit" && Game.fireIsLit === true) {
             notifCheck.push(true);
-            console.log('here', nextNotifcation);
           } else if(thisFlag === "createRainwaterBarrel" && Game.foundWater === true) {
             notifCheck.push(true);
-            console.log('here', nextNotifcation);
           } else if(thisFlag === "!createRainwaterBarrel" && Game.foundWater === false) {
             notifCheck.push(true);
-            console.log('here', nextNotifcation);
+          } else if(thisFlag === "!foundPeople" && Game.foundPeople === false){
+            notifCheck.push(true);
           }
-          console.log('Exiting loop')
         }
-        console.log(notifCheck)
-        console.log(notifCheck.length, nextNotifcation.flagRequirements.length);
-        if(!notifCheck.includes(false) && notifCheck.length === nextNotifcation.flagRequirements.length) {
+
+        //evaluate the notifCheck array,
+        if(notifCheck.length === nextNotifcation.flagRequirements.length) {
           notifcationDiv.innerHTML = nextNotifcation.desc;
         }
         notifCheck = [];
@@ -230,6 +265,29 @@ export let Game = {
   tick: function() {
     Game.checkNotifications();
     Game.update();
+
+    //10:1 ratio
+    const findResource = function(resourceName, type) {
+      if(type === 'basicResources') {
+        for(var resource in Player.basicResources) {
+          if(Player.basicResources[resource].name === resourceName) {
+            return Player.basicResources[resource];
+          }
+        }
+      } else if (type === 'accumulatedResources') {
+        for(var resource in Player.accumulatedResources) {
+          if(Player.accumulatedResources[resource].name === resourceName) {
+            return Player.accumulatedResources[resource];
+          }
+        }
+      }
+    }
+    if(Game.currentFocus === 'craftWoodPlanks' && findResource('wood', 'basicResources').amount >= findResource('wood', 'basicResources').woodToPlanks) {
+      findResource('wood', 'basicResources').amount = findResource('wood', 'basicResources').amount - findResource('wood', 'basicResources').woodToPlanks;
+      let newAmount = findResource('woodPlanks', 'accumulatedResources').amount + findResource('woodPlanks', 'accumulatedResources').plankInc
+      findResource('woodPlanks', 'accumulatedResources').amount = Math.round(newAmount * 10) / 10;
+    }
+
     const fireLifeDoc = document.getElementById("fireLife");
     const waterDoc = document.getElementById('water');
     //tick logic for fire. Need to display fire with inner.html here is redundant,
@@ -248,20 +306,31 @@ export let Game = {
 
     //water tick logic
     if(Game.foundWater) {
-      if(Game.fireIsLit && Fire.fireLifeNum > 0) {
-        // let totalCleanWater;
-        Water.drinkableWaterNum = Water.drinkableWaterNum + Water.drinkableWaterGain;
-        document.getElementById('cleanWater').innerHTML = Water.drinkableWaterNum;
-      }
       //Creates water if the event to create water has been completed
       //Water is
       let totalWater;
       if((Water.waterNum + Water.waterGain) > Water.waterCap) {
         totalWater = Water.waterCap;
         Water.waterNum = Math.round(totalWater * 10) / 10;
+      } else if (Water.waterNum < 0) {
+        Water.waterNum = 0;
       } else {
         totalWater = Water.waterNum + Water.waterGain;
         Water.waterNum = Math.round(totalWater * 10) / 10;
+      }
+
+      let totalCleanWater;
+      //Removes X% of water to convert into drinkableWater
+      // Takes (base) 75% of waterGain and puts it to drinkableWaterGain
+      let percentToDecimal = (Water.waterToDrinkableWater / 100);
+      let convertPercent = percentToDecimal * Water.waterGain;
+      if(Game.fireIsLit && Fire.fireLifeNum > 0 && Game.currentFocus === 'craftCleanWater')  {
+        console.log('yeah')
+        let newTotalWater = Water.waterNum - convertPercent;
+        Water.waterNum = Math.round(newTotalWater * 10) / 10;
+        totalCleanWater = Water.drinkableWaterNum + Water.drinkableWaterGain;
+        Water.drinkableWaterNum = Math.round(totalCleanWater * 10) / 10;
+        document.getElementById('cleanWater').innerHTML = Water.drinkableWaterNum;
       }
       waterDoc.innerHTML = 'Water: ' + Water.waterNum + '%';
     }

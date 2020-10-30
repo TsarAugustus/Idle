@@ -1,8 +1,6 @@
 * {
   margin: 0;
 }
-p {
-}
 
 body {
   background-color: #f1faee;
@@ -13,20 +11,15 @@ body {
   width: 30%;
 }
 #oneTimeEvents {
-  padding-top: 10%;
-  padding-left: 10%;
-  padding-right: 10%
+  margin-top: 50%;
 }
 
 #accumulatedResources {
   text-align: center;
 }
 
-/* unlock, event, other */
-
 #oneTimeEvents button {
   width: 100%;
-  margin-top: 1em;
   padding: 0.5em
 }
 /* .unlock {

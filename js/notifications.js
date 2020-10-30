@@ -8,5 +8,8 @@ export let Notifications = {
   }, {
     desc: 'Maybe if I boil this water I can use it.',
     flagRequirements: ['fireIsLit', 'createRainwaterBarrel']
+  }, {
+    desc: 'I wonder if there is anyone else out there?',
+    flagRequirements: ['!foundPeople', 'fireIsLit', 'createRainwaterBarrel']
   }]
 }
