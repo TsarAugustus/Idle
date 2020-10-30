@@ -3,9 +3,21 @@ import { Events } from "./js/events.js";
 import { Player } from "./js/Player.js";
 import { Water } from "./js/Water.js"
 import { Fire } from "./js/Fire.js";
+import { Titles } from "./js/titles.js";
+import { Notifications } from "./js/notifications.js"
 
 export let Game = {
   init: function() {
+    let playerName = window.prompt('Please input your name: ');
+    Player.playerName = playerName;
+    document.getElementById('playerName').innerHTML = Player.playerName;
+    Player.currentTitle = Titles.genericTitles[Math.floor(Math.random() * Titles.genericTitles.length)];
+    if(Player.currentTitle.affix === 'P') {
+      document.getElementById('P').innerHTML = Player.currentTitle.titleName;
+    } else if(Player.currentTitle.affix === 'S') {
+      document.getElementById('S').innerHTML = Player.currentTitle.titleName;
+    }
+
     Game.fireIsLit = false;
     Game.foundWater = false;
     Game.tickAmt = 0;
@@ -175,9 +187,48 @@ export let Game = {
       }
     }
   },
+  checkNotifications: function() {
+    //this will check the notifcations
+    const notifcationDiv = document.getElementById('notifications');
+    let notif = Notifications.intro;
+    if((Game.tickAmt % 10) === 0) {
+      let notifCheck = [];
+      let notifName;
+      const check = notif.filter(function(nextNotifcation) {
+        console.log('Start of filter')
+        for(var flag in nextNotifcation.flagRequirements) {
+          console.log('Start of for loop, iteration: ' + flag);
+          let thisFlag = nextNotifcation.flagRequirements[flag];
+
+          if(thisFlag === '!fireIsLit' && Game.fireIsLit === false) {
+            notifcationDiv.innerHTML = nextNotifcation.desc;
+          }
+
+          if(thisFlag === "fireIsLit" && Game.fireIsLit === true) {
+            notifCheck.push(true);
+            console.log('here', nextNotifcation);
+          } else if(thisFlag === "createRainwaterBarrel" && Game.foundWater === true) {
+            notifCheck.push(true);
+            console.log('here', nextNotifcation);
+          } else if(thisFlag === "!createRainwaterBarrel" && Game.foundWater === false) {
+            notifCheck.push(true);
+            console.log('here', nextNotifcation);
+          }
+          console.log('Exiting loop')
+        }
+        console.log(notifCheck)
+        console.log(notifCheck.length, nextNotifcation.flagRequirements.length);
+        if(!notifCheck.includes(false) && notifCheck.length === nextNotifcation.flagRequirements.length) {
+          notifcationDiv.innerHTML = nextNotifcation.desc;
+        }
+        notifCheck = [];
+      });
+    }
+  },
   //The game tick will control the updates on the screen for the Fire and Water.
   //Game tick is initiated by createFire Event, through Fire.js module
   tick: function() {
+    Game.checkNotifications();
     Game.update();
     const fireLifeDoc = document.getElementById("fireLife");
     const waterDoc = document.getElementById('water');
@@ -197,6 +248,11 @@ export let Game = {
 
     //water tick logic
     if(Game.foundWater) {
+      if(Game.fireIsLit && Fire.fireLifeNum > 0) {
+        // let totalCleanWater;
+        Water.drinkableWaterNum = Water.drinkableWaterNum + Water.drinkableWaterGain;
+        document.getElementById('cleanWater').innerHTML = Water.drinkableWaterNum;
+      }
       //Creates water if the event to create water has been completed
       //Water is
       let totalWater;

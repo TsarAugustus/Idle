@@ -2,12 +2,18 @@ export let Player = {
   //Basic resources from foraging
   basicResources: [{
     'name': 'wood',
-    'amount': 0
+    'amount': 100
   }, {
     'name': 'stone',
-    'amount': 0
+    'amount': 100
   }, {
     'name': 'leaves',
-    'amount': 0
-  }]
+    'amount': 100
+  }],
+  accumulatedResources: [{
+    name: 'cleanWater',
+    amount: 0
+  }],
+  name: undefined,
+  currentTitle: undefined
 }

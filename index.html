@@ -4,39 +4,49 @@
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <div id="upgrades">
-      <h2>Upgrades</h2>
-      <p></p>
+    <div id="resourceAndEvent">
+      <div id="basicResources">
+        <p>Wood: <span class="resource" id="wood">0</span></p>
+        <p>Stone: <span class="resource" id="stone">0</span></p>
+        <p>Leaves: <span class="resource" id="leaves">0</span></p>
+      </div>
+      <div id="accumulatedResources">
+        <p>Clean Water: <span class='accResource' id="cleanWater">0</span></p>
+      </div>
     </div>
     <div id="gameArea">
+      <div id="topContainer">
+        <div id="notifDiv">
+          <span id="notifications"></span>
+        </div>
+        <h2><span id="P"></span><span id="playerName"></span><span id="S"></span></h2>
+      </div>
+
       <div id="specialResources">
         <span id="fireLife"></span>
-        <br>
         <span id="water"></span>
       </div>
       <br>
       <button id="forage">Forage</button>
       <br>
       <button id="stoke">Stoke the Fire</button>
-    </div>
-    <div id="resourceAndEvent">
-      <div id="basicResources">
-        <h2>Basic Resources</h2>
-        <p>Wood: <span class="resource" id="wood">0</span></p>
-        <p>Stone: <span class="resource" id="stone">0</span></p>
-        <p>Leaves: <span class="resource" id="leaves">0</span></p>
-      </div>
       <div id="oneTimeEvents">
         <h2>Events</h2>
-        <button class="button" id="createFire" name="createFire">Create a Fire</button>
-        <button class="button" id="createHouse" name="createHouse">Create a House</button>
-        <button class="button" id="createRainwaterBarrel" name="createRainwaterBarrel"></button>
+        <button class="button unlock" id="createFire" name="createFire">Create a Fire</button>
+        <button class="button oneTimeEvent" id="createHouse" name="createHouse">Create a House</button>
+        <button class="button other" id="createRainwaterBarrel" name="createRainwaterBarrel"></button>
       </div>
+    </div>
+    <div id="upgrades">
+      <h2>Upgrades</h2>
+      <p></p>
     </div>
     <script src="js/events.js" type="module"></script>
     <script src="js/player.js" type="module"></script>
     <script src="js/water.js" type="module"></script>
     <script src="js/fire.js" type="module"></script>
+    <script src="js/titles.js" type="module"></script>
+    <script src="js/notifications.js" type="module"></script>
     <script src="main.js" type="module" charset="utf-8"></script>
   </body>
 </html>
