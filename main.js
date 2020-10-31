@@ -20,6 +20,7 @@ export let Game = {
 
     Game.fireIsLit = false;
     Game.foundWater = false;
+    Game.createHouse = false;
     Game.foundPeople = false;
     Game.currentFocus;
     Game.tickAmt = 0;
@@ -27,6 +28,7 @@ export let Game = {
     //Initializations
     document.getElementById('cleanWaterWrap').style.display = "none";
     document.getElementById('stoke').style.display = 'none';
+    document.getElementById('woodPlankWrap').style.display = 'none'
     let buttons = document.getElementsByClassName('button');
     let forage = document.getElementById('forage').onclick = function() {
       Game.focus(event.target.id)
@@ -48,7 +50,8 @@ export let Game = {
       (function(index) {
         //When button is clicked, fire the Game.eventUpgrade function
         buttons[index].onclick = function() {
-          Game.eventUpgrade(buttons[index].name, Player.basicResources);
+          // Game.eventUpgrade(buttons[index].name, Player.basicResources);
+          Game.eventUpgrade(buttons[index].name, Player);
         }
         //Hide the buttons
         buttons[index].style.display = "none";
@@ -129,23 +132,30 @@ export let Game = {
     });
 
     let playerCheckValue = [];
-    const checkPlayerResources = playerResources.find(function(playerItems) {
-      for(var eventResource in Object.keys(findEvent.required[0])) {
-        const thisName = Object.keys(findEvent.required[0])[eventResource];
-        const thisValue = Object.values(findEvent.required[0])[eventResource];
-        if(thisName === playerItems.name) {
-          if(thisValue <= playerItems.amount) {
+    let thisEventResources = Object.keys(findEvent.required[0]);
+    let thisEventCost = Object.values(findEvent.required[0]);
+    const checkPlayerResources = thisEventResources.find(function(items) {
+      for(var resource in playerResources.basicResources) {
+        if(playerResources.basicResources[resource].name === items) {
+          if(playerResources.basicResources[resource].amount >= thisEventCost[resource]) {
             playerCheckValue.push(true);
             break;
-          } else {
-            playerCheckValue.push(false);
-            break;
+          }
+        }
+      }
+      for(var resource in playerResources.accumulatedResources) {
+        if(playerResources.accumulatedResources[resource].name === items) {
+          for(var eventResource in findEvent.required[0]) {
+            if(findEvent.required[0][items] <= Player.accumulatedResources[resource].amount) {
+              playerCheckValue.push(true);
+              break;
+            }
           }
         }
       }
     });
 
-    if(!playerCheckValue.includes(false)) {
+    if(thisEventResources.length === playerCheckValue.length) {
       if(findEvent.name === 'createFire') {
         Game.fireIsLit = true;
         document.getElementById('stoke').style.display = "block";
@@ -154,28 +164,34 @@ export let Game = {
         Water.rainwaterBarrelNum++;
         document.getElementById('cleanWaterWrap').style.display = "block";
         document.getElementById('water').innerHTML = 'Water: ' + Water.waterNum + '%';
+      } else if (findEvent.name === 'createHouse') {
+        Game.createHouse = true;
       }
-      let removePlayerMaterials = playerResources.find(function(items) {
-        for(var eventItem in Object.keys(findEvent.required[0])){
-          if(Object.keys(findEvent.required[0])[eventItem] === items.name) {
-            items.amount = items.amount - Object.values(findEvent.required[0])[eventItem];
-            findEvent.isEventComplete = true;
-            break;
+      for(var num in thisEventResources) {
+        let removePlayerMaterials = playerResources.basicResources.find(function(items) {
+          if(items.name === thisEventResources[num]) {
+            items.amount = items.amount - thisEventCost[num];
+            findEvent.isEventComplete = true
           }
-        }
-      });
-      findEvent.isEventComplete = true;
+        });
+        break;
+        findEvent.isEventComplete = true;
+      }
     }
+
     Game.update();
   },
   update: function() {
+    //calls the forage function if forage is the currentFocus
     if(Game.currentFocus && Game.currentFocus === 'forage') {
       Game.forage();
     }
+
+
     for(var resource in Player.accumulatedResources) {
-      console.log()
-      if(Player.accumulatedResources[resource].name === 'woodPlanks') {
-        document.getElementById('woodPlanks').innerHTML = Player.accumulatedResources[resource].amount;
+      if(Player.accumulatedResources[resource].name === 'woodPlanks' && (Player.basicResources[0].woodToPlanks / Player.basicResources[0].amount) <= 2) {
+        document.getElementById('woodPlankWrap').style.display = 'block';
+        // document.getElementById('woodPlanks').innerHTML = Player.accumulatedResources[resource].amount;
       }
     }
     //This bit is necessary when the stoke function is passed
@@ -247,6 +263,8 @@ export let Game = {
             notifCheck.push(true);
           } else if(thisFlag === "!createRainwaterBarrel" && Game.foundWater === false) {
             notifCheck.push(true);
+          } else if(thisFlag === 'createHouse' && Game.createHouse === true) {
+            notifCheck.push(true);
           } else if(thisFlag === "!foundPeople" && Game.foundPeople === false){
             notifCheck.push(true);
           }
@@ -284,8 +302,11 @@ export let Game = {
     }
     if(Game.currentFocus === 'craftWoodPlanks' && findResource('wood', 'basicResources').amount >= findResource('wood', 'basicResources').woodToPlanks) {
       findResource('wood', 'basicResources').amount = findResource('wood', 'basicResources').amount - findResource('wood', 'basicResources').woodToPlanks;
-      let newAmount = findResource('woodPlanks', 'accumulatedResources').amount + findResource('woodPlanks', 'accumulatedResources').plankInc
+      let newAmount = findResource('woodPlanks', 'accumulatedResources').amount + findResource('woodPlanks', 'accumulatedResources').plankInc;
       findResource('woodPlanks', 'accumulatedResources').amount = Math.round(newAmount * 10) / 10;
+      document.getElementById('woodPlanks').innerHTML = findResource('woodPlanks', 'accumulatedResources').amount;
+      // console.log(findResource('wood', 'basicResources'));
+      document.getElementById('wood').innerHTML = findResource('wood', 'basicResources').amount;
     }
 
     const fireLifeDoc = document.getElementById("fireLife");
@@ -325,7 +346,6 @@ export let Game = {
       let percentToDecimal = (Water.waterToDrinkableWater / 100);
       let convertPercent = percentToDecimal * Water.waterGain;
       if(Game.fireIsLit && Fire.fireLifeNum > 0 && Game.currentFocus === 'craftCleanWater')  {
-        console.log('yeah')
         let newTotalWater = Water.waterNum - convertPercent;
         Water.waterNum = Math.round(newTotalWater * 10) / 10;
         totalCleanWater = Water.drinkableWaterNum + Water.drinkableWaterGain;

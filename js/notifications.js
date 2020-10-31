@@ -10,6 +10,6 @@ export let Notifications = {
     flagRequirements: ['fireIsLit', 'createRainwaterBarrel']
   }, {
     desc: 'I wonder if there is anyone else out there?',
-    flagRequirements: ['!foundPeople', 'fireIsLit', 'createRainwaterBarrel']
+    flagRequirements: ['!foundPeople', 'fireIsLit', 'createRainwaterBarrel', 'createHouse']
   }]
 }

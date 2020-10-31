@@ -15,8 +15,9 @@ export let Events = [{
   'isEventComplete': false,
   'available': false,
   'required': [{
-    'wood': 0,
-    'stone': 30
+    'wood': 5,
+    'stone': 30,
+    'woodPlanks': 10
   }],
   'desc': 'Create a House'
 }, {
