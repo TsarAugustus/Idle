@@ -3,21 +3,21 @@ export let Player = {
   basicResources: [{
     'name': 'wood',
     'amount': 100,
-    'woodToPlanks': 10,
+    'woodToPlanks': 10
   }, {
     'name': 'stone',
-    'amount': 0,
+    'amount': 100
   }, {
     'name': 'leaves',
-    'amount': 0
+    'amount': 100
   }],
   accumulatedResources: [{
     name: 'cleanWater',
     amount: 0
   }, {
     name: 'woodPlanks',
-    amount: 0,
-    plankInc: 0.1
+    amount: 100,
+    plankInc: 1
   }],
   name: undefined,
   currentTitle: undefined

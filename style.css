@@ -57,6 +57,15 @@ body {
   z-index: 99;
 }
 
+#upgrades h2 {
+  text-align: center;
+}
+
+#houseUpgradeDiv {
+  text-align: center;
+  border: 1px solid black;
+}
+
 #specialResources {
   margin-bottom: 5%;
 }

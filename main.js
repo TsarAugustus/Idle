@@ -4,6 +4,7 @@ import { Player } from "./js/Player.js";
 import { Water } from "./js/Water.js"
 import { Fire } from "./js/Fire.js";
 import { Titles } from "./js/titles.js";
+import { Upgrades } from "./js/upgrades.js";
 import { Notifications } from "./js/notifications.js"
 
 export let Game = {
@@ -29,7 +30,9 @@ export let Game = {
     document.getElementById('cleanWaterWrap').style.display = "none";
     document.getElementById('stoke').style.display = 'none';
     document.getElementById('woodPlankWrap').style.display = 'none'
-    let buttons = document.getElementsByClassName('button');
+    document.getElementById('houseUpgradeDiv').style.display = 'none';
+    let eventButtons = document.getElementsByClassName('eventButton');
+    let upgradeButtons = document.getElementsByClassName('upgradeButton');
     let forage = document.getElementById('forage').onclick = function() {
       Game.focus(event.target.id)
     }
@@ -44,28 +47,35 @@ export let Game = {
     document.getElementById("craftWoodPlanks").onclick = function(event) {
       Game.focus(event.target.id);
     }
-    //attaches an onclick function to eveery event button.
+
+    for(var i=0; i < upgradeButtons.length; i++) {
+      (function(index) {
+        upgradeButtons[index].onclick = function() {
+          Game.buildingUpgrade(upgradeButtons[index], Player);
+        }
+      })(i);
+    }
+    //attaches an onclick function to every event button.
     //Might be better to fire the onclick function somewhere else, reduce callback hell
-    for (var i = 0; i < buttons.length; i++) {
+    for (var i = 0; i < eventButtons.length; i++) {
       (function(index) {
         //When button is clicked, fire the Game.eventUpgrade function
-        buttons[index].onclick = function() {
-          // Game.eventUpgrade(buttons[index].name, Player.basicResources);
-          Game.eventUpgrade(buttons[index].name, Player);
+        eventButtons[index].onclick = function() {
+          Game.eventUpgrade(eventButtons[index].name, Player);
         }
-        //Hide the buttons
-        buttons[index].style.display = "none";
+        //Hide the eventButtons
+        eventButtons[index].style.display = "none";
 
         let buttonHTML = []
         const eventLoop = Events.filter(function(eventName) {
-          if(eventName.name === buttons[index].name) {
+          if(eventName.name === eventButtons[index].name) {
             buttonHTML.push(eventName.desc);
             for(var i in eventName.required[0]){
               let name = i.charAt(0).toUpperCase() + i.slice(1);
               let cost = eventName.required[0][i]
               buttonHTML.push(name + ': ' + cost);
             }
-            buttons[index].innerHTML = buttonHTML.join("<br>");
+            eventButtons[index].innerHTML = buttonHTML.join("<br>");
           }
         });
       })(i);
@@ -84,6 +94,7 @@ export let Game = {
   },
   //Forage function. Finds random object from basic resources that are available.
   //Then it updates that resources span in the divList
+
   forage: function() {
     const basicResources = Player.basicResources;
     const randomItem = basicResources[Math.floor(Math.random() * basicResources.length)];
@@ -178,8 +189,74 @@ export let Game = {
         findEvent.isEventComplete = true;
       }
     }
+    let upgradeButton = [];
+    upgradeButton.id = 'upgrade-' + buttonName;
+    Game.buildingUpgrade(upgradeButton);
 
     Game.update();
+  },
+  buildingUpgrade: function(upgradeButton, player) {
+    //find upgrade/building in Upgrades module
+    let buildingDocHTML = [];
+    let nameContainer = [];
+    let findBuilding = Upgrades.filter(function(building) {
+      for(let i = Object.values(upgradeButton.id).length - 1; i>=0; i--){
+        if(Object.values(upgradeButton.id)[i] === '-') {
+          break;
+        } else {
+          nameContainer.push(Object.values(upgradeButton.id)[i]);
+        }
+      }
+
+      let name = nameContainer.reverse().join('');
+      if(name === building.name) {
+        return building;
+      }
+    })
+    //Compare upgrade required resources to player resources
+    if(findBuilding[0]) {
+      let buildingReqMaterials = findBuilding[0].required[0];
+      let checkContainer = [];
+      for(var resource in buildingReqMaterials) {
+        for(var playerResource in Player.basicResources) {
+          if(Player.basicResources[playerResource].name === resource && buildingReqMaterials[resource] <= Player.basicResources[playerResource].amount) {
+            checkContainer.push(true);
+          }
+        }
+
+        for(var playerResource in Player.accumulatedResources) {
+          if(Player.accumulatedResources[playerResource].name === resource && buildingReqMaterials[resource] <= Player.accumulatedResources[playerResource].amount) {
+            checkContainer.push(true);
+          }
+        }
+      }
+
+      //If the player has enough, remove items from player and upgrade building
+      if(Object.keys(buildingReqMaterials).length === checkContainer.length) {
+        for(resource in buildingReqMaterials) {
+          for(var playerResource in Player.basicResources) {
+            if(resource === Player.basicResources[playerResource].name){
+              let name = resource.charAt(0).toUpperCase() + resource.slice(1);
+              buildingDocHTML.push(name + ': ' + buildingReqMaterials[resource])
+              Player.basicResources[playerResource].amount = Player.basicResources[playerResource].amount - buildingReqMaterials[resource];
+            }
+          }
+          for(var playerResource in Player.accumulatedResources) {
+            if(resource === Player.accumulatedResources[playerResource].name){
+              let name = resource.charAt(0).toUpperCase() + resource.slice(1)
+              buildingDocHTML.push(name + ': ' + buildingReqMaterials[resource])
+              Player.accumulatedResources[playerResource].amount = Player.accumulatedResources[playerResource].amount - buildingReqMaterials[resource];
+            }
+          }
+        }
+        findBuilding[0].amount = findBuilding[0].amount + 1;
+        let buildingDoc = document.getElementById('upgrade-' + findBuilding[0].name);
+        buildingDoc.innerHTML = buildingDocHTML.join('<br>');
+      }
+    }
+    Game.update();
+
+
   },
   update: function() {
     //calls the forage function if forage is the currentFocus
@@ -187,11 +264,17 @@ export let Game = {
       Game.forage();
     }
 
+    if(Game.createHouse === true) {
+      document.getElementById('houseUpgradeAmt').innerHTML = Upgrades[0].amount;
+      document.getElementById('houseUpgradeDiv').style.display = 'block';
+    }
+
 
     for(var resource in Player.accumulatedResources) {
       if(Player.accumulatedResources[resource].name === 'woodPlanks' && (Player.basicResources[0].woodToPlanks / Player.basicResources[0].amount) <= 2) {
+        document.getElementById('woodPlanks').innerHTML = Player.accumulatedResources[resource].amount;
+        document.getElementById('craftWoodPlanks').innerHTML = Player.basicResources[0].woodToPlanks + ' Wood => ' + Player.accumulatedResources[resource].plankInc + ' Plank';
         document.getElementById('woodPlankWrap').style.display = 'block';
-        // document.getElementById('woodPlanks').innerHTML = Player.accumulatedResources[resource].amount;
       }
     }
     //This bit is necessary when the stoke function is passed
@@ -300,12 +383,12 @@ export let Game = {
         }
       }
     }
+
     if(Game.currentFocus === 'craftWoodPlanks' && findResource('wood', 'basicResources').amount >= findResource('wood', 'basicResources').woodToPlanks) {
       findResource('wood', 'basicResources').amount = findResource('wood', 'basicResources').amount - findResource('wood', 'basicResources').woodToPlanks;
       let newAmount = findResource('woodPlanks', 'accumulatedResources').amount + findResource('woodPlanks', 'accumulatedResources').plankInc;
       findResource('woodPlanks', 'accumulatedResources').amount = Math.round(newAmount * 10) / 10;
       document.getElementById('woodPlanks').innerHTML = findResource('woodPlanks', 'accumulatedResources').amount;
-      // console.log(findResource('wood', 'basicResources'));
       document.getElementById('wood').innerHTML = findResource('wood', 'basicResources').amount;
     }
 
