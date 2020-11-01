@@ -97,14 +97,15 @@ export let Game = {
 
   forage: function() {
     const basicResources = Player.basicResources;
+    const prestigeModifier = Player.prestigeModifier;
     const randomItem = basicResources[Math.floor(Math.random() * basicResources.length)];
     const divList = document.getElementById('basicResources').querySelectorAll('span');
 
     //For loop that iterates through the resources, updates how many are in Player
     //Then update
     for (var i = 0; i < basicResources.length; i++) {
-      if(Player.basicResources[i].name === randomItem.name) {
-        Player.basicResources[i].amount++;
+      if(basicResources[i].name === randomItem.name) {
+        basicResources[i].amount = basicResources[i].amount + (1 * prestigeModifier);
         if(randomItem.name === divList[i].id) {
           divList[i].innerHTML = basicResources[i].amount
         }
@@ -267,8 +268,11 @@ export let Game = {
     if(Game.createHouse === true) {
       document.getElementById('houseUpgradeAmt').innerHTML = Upgrades[0].amount;
       document.getElementById('houseUpgradeDiv').style.display = 'block';
+      let num = Math.floor(Math.random() * 101);
+      if(Math.floor(num === 50) && Game.foundPeople === false) {
+        Game.foundPeople = true;
+      }
     }
-
 
     for(var resource in Player.accumulatedResources) {
       if(Player.accumulatedResources[resource].name === 'woodPlanks' && (Player.basicResources[0].woodToPlanks / Player.basicResources[0].amount) <= 2) {
@@ -342,14 +346,16 @@ export let Game = {
           //Some notifications require events to not be completed.
           if(thisFlag === "fireIsLit" && Game.fireIsLit === true) {
             notifCheck.push(true);
-          } else if(thisFlag === "createRainwaterBarrel" && Game.foundWater === true) {
+          } else if(thisFlag === 'createRainwaterBarrel' && Game.foundWater === true) {
             notifCheck.push(true);
-          } else if(thisFlag === "!createRainwaterBarrel" && Game.foundWater === false) {
+          } else if(thisFlag === '!createRainwaterBarrel' && Game.foundWater === false) {
             notifCheck.push(true);
           } else if(thisFlag === 'createHouse' && Game.createHouse === true) {
             notifCheck.push(true);
-          } else if(thisFlag === "!foundPeople" && Game.foundPeople === false){
+          } else if(thisFlag === '!foundPeople' && Game.foundPeople === false){
             notifCheck.push(true);
+          } else if (thisFlag === 'foundPeople' && Game.foundPeople === true) {
+            notifCheck.push(true)
           }
         }
 

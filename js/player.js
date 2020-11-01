@@ -20,5 +20,6 @@ export let Player = {
     plankInc: 1
   }],
   name: undefined,
-  currentTitle: undefined
+  currentTitle: undefined,
+  prestigeModifier: 1
 }
