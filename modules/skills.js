@@ -2,18 +2,36 @@ export let skills = [
     //Basic skills, little or no previous requirements
     {
         name: 'Foraging',
-        type: ['INT', 'DEX'],
-        level: 0,
-        active: true
+        type: ['INT', 'AGI'],
+        level: 1,
+        active: true,
+        currentXP: 0,
+        XPToLevel: 100,
+        XPPerSuccess: 50
     }, {
         name: 'Farming',
-        type: ['INT', 'STR', 'DEX'],
+        type: ['INT', 'STR', 'AGI'],
         level: 0,
         requirements: [{
             name: 'Foraging',
-            level: 2
+            level: 5
         }],
-        active: true
+        active: false,
+        currentXP: 0,
+        XPToLevel: 100,
+        XPPerSuccess: 50
+    }, {
+        name: 'Animal Husbandry',
+        type: ['END', 'STR', 'AGI'],
+        level: 0,
+        requirements: [{
+            name: 'Farming',
+            level: 7
+        }],
+        active: false,
+        currentXP: 0,
+        XPToLevel: 100,
+        XPPerSuccess: 50
     }
 ];
 

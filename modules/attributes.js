@@ -1,4 +1,3 @@
-import { skills } from './skills.js';
 let attributes = [
 //primary attributes
 {
@@ -126,22 +125,8 @@ function findAttributeLevel(attributeName) {
     return attribute.level;
 }
 
-function findAttribute(attributeName) {
-    let att = attributes.find(function(attribute) {
-        return attribute.name === attributeName;
-    });
-    return att;
-}
 
 for(let att in secondary) {
     attributes.push(secondary[att]);
 }
-
-let updateAttributes = function() {
-    let getSecondary = attributes.filter(attrType => attrType.type === 'Secondary');
-    for(let attr of getSecondary) {
-        attr.level = attr.calculate();
-    }
-}
-updateAttributes();
-export { attributes, updateAttributes };
+export { attributes };
