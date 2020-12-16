@@ -1,58 +1,11 @@
 <html>
-  <head>
-    <title>Idle</title>
-    <link rel="stylesheet" href="style.css">
-  </head>
-  <body>
-    <div id="resourceAndEvent">
-      <div id="basicResources">
-        <p>Wood: <span class="resource" id="wood">0</span></p>
-        <p>Stone: <span class="resource" id="stone">0</span></p>
-        <p>Leaves: <span class="resource" id="leaves">0</span></p>
-      </div>
-      <div id="accumulatedResources">
-        <p id="cleanWaterWrap">Clean Water: <span class="accResource" id="cleanWater"></span> <button id="craftCleanWater"></button></p>
-        <p id="woodPlankWrap">Wood Planks: <span class="accResource" id="woodPlanks"></span> <button id="craftWoodPlanks"></button></p>
-      </div>
-    </div>
-    <div id="gameArea">
-      <div id="topContainer">
-        <div id="notifDiv">
-          <span id="notifications"></span>
-        </div>
-        <h2><span id="P"></span><span id="playerName"></span><span id="S"></span></h2>
-      </div>
+    <head>
 
-      <div id="specialResources">
-        <span id="fireLife"></span>
-        <span id="water"></span>
-      </div>
-      <br>
-      <button id="forage">Forage</button>
-      <br>
-      <button id="stoke">Stoke the Fire</button>
-      <div id="oneTimeEvents">
-        <h2>Events</h2>
-        <button class="eventButton unlock" id="createFire" name="createFire">Create a Fire</button>
-        <button class="eventButton oneTimeEvent" id="createHouse" name="createHouse">Create a House</button>
-        <button class="eventButton other" id="createRainwaterBarrel" name="createRainwaterBarrel"></button>
-      </div>
-    </div>
-    <div id="upgrades">
-      <h2>Buildings</h2>
-    <div id="houseUpgradeDiv">
-      <p>Number of Houses: <span id="houseUpgradeAmt">0</span></p>
-      <button class="upgradeButton" id="upgrade-createHouse"></button>
-    </div>
-    </div>
-    <script src="js/checkNotifications.js" type="module"></script>
-    <script src="js/upgrades.js" type="module"></script>
-    <script src="js/events.js" type="module"></script>
-    <script src="js/player.js" type="module"></script>
-    <script src="js/titles.js" type="module"></script>
-    <script src="js/water.js" type="module"></script>
-    <script src="js/fire.js" type="module"></script>
-    <script src="js/notifications.js" type="module"></script>
-    <script src="main.js" type="module" charset="utf-8"></script>
-  </body>
+    </head>
+    <body>
+        <div id="attributes">
+
+        </div>
+        <script src="main.js" type="module"></script>
+    </body>
 </html>
