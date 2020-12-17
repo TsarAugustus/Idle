@@ -44,7 +44,7 @@ export let skills = [
         active: false,
         currentXP: 0,
         XPToLevel: 100,
-        XPPerSuccess: 50 + findItem('FishingPole')
+        XPPerSuccess: 50
     },
 ];
 

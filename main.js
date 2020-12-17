@@ -3,9 +3,22 @@ import { attributes } from './modules/attributes.js';
 import { items, findItem } from './modules/items.js';
 import { Player, playerFind } from './modules/player.js';
 
+let currentFocus;
+
 function levelUpSkill(skill) {
     skill.level++;
-    skill.XPToLevel = skill.XPToLevel * 2;
+    skill.XPToLevel = Math.round(skill.XPToLevel * 1.6);
+    if(skill.level >= 2 & !document.getElementById(skill.name + 'Focus')) {
+        let element = document.createElement('button');
+        element.id = skill.name + 'Focus';
+        element.innerHTML = 'Focus on ' + skill.name
+        element.onclick = function() {
+            console.log('focusing on ', skill)
+            currentFocus = skill;
+        }
+        document.getElementById(skill.name + 'Div').appendChild(element)
+
+    }
     let primaryAttributes = attributes.filter(type => type.type === 'Primary');
     for(let attribute of primaryAttributes) {
         for(let skillAttribute of skill.type) {
@@ -22,6 +35,7 @@ function updateSkills() {
     let activeSkills = skills.filter(skill => skill.active === true);
     for(let skill of activeSkills) {
         if(!document.getElementById(skill.name)) {
+            let wrapper = document.createElement('div');
             let element = document.createElement('button');
             let elementText = skill.name + ' Level: ' + skill.level + '</br>CurrentXP/XPToLevel/XPPerSuccess</br>' + skill.currentXP + '/' + skill.XPToLevel + '/' + skill.XPPerSuccess;
             
@@ -34,7 +48,9 @@ function updateSkills() {
                     levelUpSkill(skill);
                 }
             }
-            skillDiv.appendChild(element);
+            wrapper.id = skill.name + 'Div';
+            wrapper.appendChild(element)
+            skillDiv.appendChild(wrapper);
         }
     }
 }
@@ -65,9 +81,19 @@ function updateAttributes() {
     attributeDiv.appendChild(secondaryDiv);
 }
 
+function updateInventory() {
+    let inventoryDiv = document.getElementById('inventory');
+    console.log(Player.items)
+}
+
 function update() {
     updateSkills();
     updateAttributes();
+    updateInventory();
+    checkNextSkills();
+    if(currentFocus) {
+        document.getElementById(currentFocus.name).click();
+    }
 }
 
 function init() {
@@ -138,8 +164,9 @@ function craftItem(item) {
 
 //game tick
 setInterval(function() {
-    checkNextSkills();
-    craftItem('Fishing Pole');
+    // checkNextSkills();
+    update();
+    // craftItem('Fishing Pole');
     // console.log(attributes)
 }, 1000);
 
