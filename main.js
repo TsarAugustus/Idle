@@ -1,5 +1,7 @@
 import { skills } from './modules/skills.js';
 import { attributes } from './modules/attributes.js';
+import { items, findItem } from './modules/items.js';
+import { Player, playerFind } from './modules/player.js';
 
 function levelUpSkill(skill) {
     skill.level++;
@@ -8,7 +10,7 @@ function levelUpSkill(skill) {
     for(let attribute of primaryAttributes) {
         for(let skillAttribute of skill.type) {
             if(skillAttribute === attribute.name) {
-                attribute.level = attribute.level + Math.round((skill.level / skill.type.length) / 2);
+                attribute.level = attribute.level + Math.round((skill.level / skill.type.length) / 4);
                 updateAttributes();
             }
         }
@@ -90,12 +92,59 @@ function checkNextSkills() {
     }
 }
 
+function craftItem(item) {
+    //to craft an item, it merely will check if the player has its REQUIRES 
+    let newItemInventory = [];
+    console.log('Finding item in Items module')
+    let thisItem = findItem(item);
+    console.log(thisItem)
+    for(let req of thisItem.requires) {
+        console.log('Finding required items for item')
+        let reqItem = playerFind(req.name);
+        console.log('Checking if Player has enough')
+        if(reqItem.amount >= req.amount) {
+            console.log('Player has enough for this item')
+            newItemInventory.push({
+                name: req.name,
+                amount: reqItem.amount - req.amount
+            });
+        }
+    }
+    console.log(newItemInventory)
+    if(thisItem.requires.length === newItemInventory.length) {
+        console.log('Replacing inventory slots')
+        for(let newItem of newItemInventory) {
+            console.log('Replacing slot ', newItem)
+            playerFind(newItem.name).amount = newItem.amount;
+
+        }
+        if(!playerFind(thisItem.name)) {
+            console.log('Doesnt exist')
+            Player.items.push({
+                name: thisItem.name,
+                amount: 1
+            });
+            console.log('Now exists? ', Player.items)
+        } else {
+            console.log('Exists!');
+            playerFind(thisItem.name).amount++;
+        }
+    } else {
+        console.log('no good')
+    }
+    console.log(Player.items)
+    
+}
+
 //game tick
 setInterval(function() {
     checkNextSkills();
+    craftItem('Fishing Pole');
     // console.log(attributes)
 }, 1000);
 
+
+//Random stuff that popped into my head that I may want to look at later
 
 //hypothermia
 //body temperature
@@ -106,13 +155,16 @@ setInterval(function() {
 //fire
 //food
 
-
-
-/////////////////////
-
-
 //self actualization
 //prestige, feeling of accomplishment
 //intimate relationships, friends
 //security, safety
 //food, water, warmth, rest
+
+
+//only one skill may be specialized at a time
+//a skills base xp may be enhanced with its corrosponding item
+//eg, the falcrony skill falcons<hatchery<falconEggs<forage(eggs)
+//eg, animalHusbandry skill animals<pen<male&female animals
+//eg, hunting skill projectile(type)<projectileLauncher
+//eg, fishing skill fishingPole<pole(wooden)&&fishingLine<thread(silk,nylon, etc)

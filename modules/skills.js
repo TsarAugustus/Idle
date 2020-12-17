@@ -1,3 +1,4 @@
+import { items, findItem } from './items.js'
 export let skills = [
     //Basic skills, little or no previous requirements
     {
@@ -32,7 +33,19 @@ export let skills = [
         currentXP: 0,
         XPToLevel: 100,
         XPPerSuccess: 50
-    }
+    }, {
+        name: 'Fishing',
+        type: ['END', 'STR', 'LUC'],
+        level: 0,
+        requirements:[{
+            name: 'Farming',
+            level: 5
+        }],
+        active: false,
+        currentXP: 0,
+        XPToLevel: 100,
+        XPPerSuccess: 50 + findItem('FishingPole')
+    },
 ];
 
 //name = obviously the name of the skill
