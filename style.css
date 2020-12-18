@@ -1,11 +1,87 @@
-#skills {
-    width: 60%;
+body {
+    display: flex;
+    /* overflow-x: hidden; */
 }
+
+#left {
+    /* border: 1px solid blue; */
+    display: flex;
+    flex: 1 0 40%;
+    flex-direction: column;
+    /* flex-wrap: wrap; */
+}
+
+#inventory {
+    display: flex;
+    /* flex-grow: 2; */
+}
+
+#attributes {
+    display: flex;
+    text-align: center;
+    /* flex-grow: 1; */
+}
+
+#Primary {
+    /* border: 1px solid black; */
+    display: flex;
+    flex: 1 0 50%;
+    flex-direction: column;
+}
+
+#Secondary {
+    /* border: 1px solid black; */
+    display: flex;
+    flex: 1 0 50%;
+    flex-direction: column;
+}
+
+#right {
+    display: flex;
+    flex: 1 0 60%;
+    flex-direction: column;
+    /* border: 1px solid red; */
+    overflow-x: hidden;
+}
+
+#skills {
+    /* border: 1px solid black; */
+    /* width: 100%; */
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    /* justify-content: flex-end; */
+}
+
+.skillDiv {
+    /* border: 1px solid black; */
+    /* width: 20%; */
+}
+
+#skillHeader {
+    text-align: center;
+}
+
 
 .focus {
     border-color: red;
 }
 
-.skill:active {
-    background-color: blue;
+.focusElement {
+    width: 100%;
+}
+
+.focusElement:disabled {
+    background-color: red;
+}
+
+.unFocusElement {
+    width: 100%;
+}
+
+
+.skill {
+    outline: none;
+    display: flex;
+    width: 100%;
 }

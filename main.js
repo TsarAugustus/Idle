@@ -38,6 +38,7 @@ function levelUpSkill(skill) {
                 //the unfocus button
                 let unFocusElement = document.createElement('button');
                 unFocusElement.id = skill.name + 'UnFocus';
+                unFocusElement.classList.add('UnfocusElement');
                 unFocusElement.innerHTML = 'Unfocus';
                 unFocusElement.onclick = function() {
                     for(let focusedSkill in focusList) {
@@ -53,7 +54,7 @@ function levelUpSkill(skill) {
                     }
                 }
                 //apply the unfocus element to the screen
-                document.getElementById(skill.name + 'Div').appendChild(unFocusElement)
+                document.getElementById(skill.name + 'Div').appendChild(unFocusElement);
             }
         }
         //add the focus element to the screen
@@ -74,10 +75,13 @@ function levelUpSkill(skill) {
     updateAttributes(); 
     checkNextSkills();
     updateSkills();
+    checkFocuses();
+    
 }
 
 function updateSkills() {
     let skillDiv = document.getElementById('skills');
+
     let activeSkills = skills.filter(skill => skill.active === true);
     for(let skill of activeSkills) {
         if(!document.getElementById(skill.name)) {
@@ -97,11 +101,11 @@ function updateSkills() {
                 element.innerHTML = skill.name + ' Level: ' + skill.level + '</br>CurrentXP/XPToLevel/XPPerSuccess</br>' + skill.currentXP + '/' + skill.XPToLevel + '/' + (skill.XPPerSuccess + findAttributeLevel(skill.XPAttributeInc));
             }
             wrapper.id = skill.name + 'Div';
+            wrapper.classList.add('skillDiv')
             wrapper.appendChild(element)
             skillDiv.appendChild(wrapper);
         } else {
             document.getElementById(skill.name).innerHTML = skill.name + ' Level: ' + skill.level + '</br>CurrentXP/XPToLevel/XPPerSuccess</br>' + skill.currentXP + '/' + skill.XPToLevel + '/' + (skill.XPPerSuccess + findAttributeLevel(skill.XPAttributeInc));
-            // console.log(skill)
         }
     }
 }
@@ -113,18 +117,29 @@ function updateAttributes() {
     }
 
     let attributeDiv = document.getElementById('attributes');
+
     let primaryDiv = document.createElement('div');
-    primaryDiv.id = 'Primary';
     let secondaryDiv = document.createElement('div');
+    primaryDiv.id = 'Primary';
     secondaryDiv.id = 'Secondary';
+
+    //applys a header to the div
+    let primaryHeader = document.createElement('h3');
+    primaryHeader.innerHTML = 'Primary Attributes'
+    primaryDiv.appendChild(primaryHeader);
+    let secondaryHeader = document.createElement('h3');
+    secondaryHeader.innerHTML = 'Secondary Attributes'
+    secondaryDiv.appendChild(secondaryHeader);
+
+    
     for(let attribute of attributes) {
         let element = document.createElement('span');
         if(attribute.type === 'Primary') {
-            element.innerHTML = attribute.name + '/' + attribute.level + '|';
+            element.innerHTML = attribute.longName + '/' + attribute.level;
             primaryDiv.appendChild(element);
         } else if(attribute.type === 'Secondary') {
             attribute.level = attribute.calculate();
-            element.innerHTML = attribute.name + '/' + attribute.level + '|';
+            element.innerHTML = attribute.longName + '/' + attribute.level;
             secondaryDiv.appendChild(element);
         }
     }
@@ -176,6 +191,7 @@ function checkNextSkills() {
             }            
         }
     }
+    checkFocuses();
 }
 
 function craftItem(item) {
@@ -222,18 +238,32 @@ function craftItem(item) {
     
 }
 
+function checkFocuses() {
+    let elements = document.getElementsByClassName('focusElement');
+    if(focusList.length === focusAmount) {        
+        for(let element of elements) {
+            element.disabled = true
+        }
+    } else {
+        for(let element of elements) {
+            element.disabled = false
+        }
+    }
+}
+
 //update function, gets called on every tick, and calls update functions for each element
 function update() {
+
     
     updateInventory();
+    checkFocuses();
     
 
     //if there are skills in the focus list, click them
     if(focusList) {
         for(let skillFocus of focusList) {
             document.getElementById(skillFocus.name).click();
-        }
-        
+        }        
     }
 }
 

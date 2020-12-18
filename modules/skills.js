@@ -65,6 +65,23 @@ export let skills = [
         XPToLevel: 100,
         XPPerSuccess: 50,
         XPAttributeInc: 'SPE'
+    },
+    {
+        name: 'Hunting',
+        type: ['INT', 'AGI', 'LOG'],
+        level: 0,
+        active: false,
+        requirements: [{
+            name: 'Foraging',
+            level: 5
+        }, {
+            name: 'Farming',
+            level: 5
+        }],
+        currentXP: 0,
+        XPToLevel: 100,
+        XPPerSuccess: 50,
+        XPAttributeInc: 'SPE'
     }
 ];
 

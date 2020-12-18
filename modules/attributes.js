@@ -2,38 +2,47 @@ let attributes = [
 //primary attributes
 {
     name: 'STR',
+    longName: 'Strength',
     level: 1,
     type: 'Primary'
 }, {
     name: 'AGI',
+    longName: 'Agility',
     level: 1,
     type: 'Primary'
 }, {
     name: 'END',
+    longName: 'Endurance',
     level: 1,
     type: 'Primary'
 }, {
     name: 'INT',
+    longName: 'Intuition',
     level: 1,
     type: 'Primary'
 }, {
     name: 'LOG',
+    longName: 'Logic',
     level: 1,
     type: 'Primary'
 }, {
     name: 'WIL',
+    longName: 'Will Power',
     level: 1,
     type: 'Primary'
 }, {
     name: 'CHA',
+    longName: 'Charisma',
     level: 1,
     type: 'Primary'
 }, {
     name: 'LUC',
+    longName: 'Luck',
     level: 1,
     type: 'Primary'
 }, {
     name: 'REP',
+    longName: 'Reputation',
     level: 1,
     type: 'Primary'
 }];
@@ -41,6 +50,7 @@ let attributes = [
 //secondary attributes are calculated after
 let secondary = [{
     name: 'HEA',
+    longName: 'Health',
     level: undefined,
     type: 'Secondary',
     calculate: function() {
@@ -48,6 +58,7 @@ let secondary = [{
     }
 }, {
     name: 'SPE',
+    longName: 'Speed',
     level: undefined,
     type: 'Secondary',
     calculate: function() {
@@ -55,6 +66,7 @@ let secondary = [{
     }
 }, {
     name: 'JUM',
+    longName: 'Jumping',
     level: undefined,
     type: 'Secondary',
     calculate: function() {
@@ -62,6 +74,7 @@ let secondary = [{
     }
 }, {
     name: 'CAR',
+    longName: 'Carry Weight',
     level: undefined,
     type: 'Secondary',
     calculate: function() {
@@ -69,6 +82,7 @@ let secondary = [{
     }
 }, {
     name: 'INI',
+    longName: 'Initiative',
     level: undefined,
     type: 'Secondary',
     calculate: function() {
@@ -76,6 +90,7 @@ let secondary = [{
     }
 }, {
     name: 'DEM', //defense melee
+    longName: 'Melee Defense',
     level: undefined,
     type: 'Secondary',
     calculate: function() {
@@ -83,6 +98,7 @@ let secondary = [{
     }
 }, {
     name: 'DER', //ranged defense
+    longName: 'Ranged Defense',
     level: undefined,
     type: 'Secondary',
     calculate: function() {
@@ -90,6 +106,7 @@ let secondary = [{
     }
 }, {
     name: 'DEN', //mental defense
+    longName: 'Mental Defense',
     level: undefined,
     type: 'Secondary',
     calculate: function() {
@@ -97,6 +114,7 @@ let secondary = [{
     }
 }, {
     name: 'DEV', //defense vital
+    longName: 'Vital Defense',
     level: undefined,
     type: 'Secondary',
     calculate: function() {
@@ -104,6 +122,7 @@ let secondary = [{
     }
 }, {
     name: 'ATM', //melee attack
+    longName: 'Melee Attack',
     level: undefined,
     type: 'Secondary',
     calculate: function() {
@@ -111,6 +130,7 @@ let secondary = [{
     }
 }, {
     name: 'ATR', //ranged attack
+    longName: 'Ranged Attack',
     level: undefined,
     type: 'Secondary',
     calculate: function() {
