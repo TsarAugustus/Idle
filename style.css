@@ -1,3 +1,11 @@
 #skills {
-    width: 30%;
+    width: 60%;
+}
+
+.focus {
+    border-color: red;
+}
+
+.skill:active {
+    background-color: blue;
 }

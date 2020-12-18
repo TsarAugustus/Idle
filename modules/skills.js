@@ -45,7 +45,22 @@ export let skills = [
         currentXP: 0,
         XPToLevel: 100,
         XPPerSuccess: 50
-    },
+    }, {
+        name: 'Crafting',
+        type: ['INT', 'AGI'],
+        level: 0,
+        active: false,
+        requirements: [{
+            name: 'Foraging',
+            level: 5
+        }, {
+            name: 'Farming',
+            level: 5
+        }],
+        currentXP: 0,
+        XPToLevel: 100,
+        XPPerSuccess: 50
+    }
 ];
 
 //name = obviously the name of the skill

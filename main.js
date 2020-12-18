@@ -3,28 +3,69 @@ import { attributes } from './modules/attributes.js';
 import { items, findItem } from './modules/items.js';
 import { Player, playerFind } from './modules/player.js';
 
-let currentFocus;
+//some variables for the focus buttons
+let focusAmount = 2;
+let focusList = [];
 
+//this function is called when a skill levels up, from the updateSkills function
 function levelUpSkill(skill) {
+    //level up the skill, and apply a new XPToLevel
     skill.level++;
     skill.XPToLevel = Math.round(skill.XPToLevel * 1.6);
+
+    //this is the element for the focus buttons
+    // the '2' here is arbitrary, and must be switched for something better later
+    //this is just for prototyping
     if(skill.level >= 2 & !document.getElementById(skill.name + 'Focus')) {
-        let element = document.createElement('button');
-        element.id = skill.name + 'Focus';
-        element.innerHTML = 'Focus on ' + skill.name
-        element.onclick = function() {
-            console.log('focusing on ', skill)
-            currentFocus = skill;
+        //create the focus button next to each skill
+        let focusElement = document.createElement('button');
+        focusElement.id = skill.name + 'Focus';
+        focusElement.classList.add('focusElement');
+        focusElement.innerHTML = 'Focus on ' + skill.name;
+        //the onclick function checks if the skill exists in the focus list
+        //if it does, it doesnt apply the focus, as it is already being focused
+        //likewise, if it doesnt exists, it pushes the skill to the focus list
+        focusElement.onclick = function() {
+            let focusListSkill = focusList.find(skillItem => skillItem.name === skill.name);
+            if(focusListSkill) {
+                console.log('skill exists in the focus list')
+            } else if(!focusListSkill && focusList.length < focusAmount) {
+                focusList.push(skill);
+                document.getElementById(skill.name).classList.add('focus');
+
+                //the unfocus button
+                let unFocusElement = document.createElement('button');
+                unFocusElement.id = skill.name + 'UnFocus';
+                unFocusElement.innerHTML = 'Unfocus';
+                unFocusElement.onclick = function() {
+                    for(let focusedSkill in focusList) {
+                        if(focusList[focusedSkill].name === skill.name) {
+                            //remove the focus class
+                            document.getElementById(skill.name).classList.remove('focus');
+                            //remove this item from the focuslist
+                            focusList.splice(focusedSkill, 1);
+                            //this is used to remove the unfocus button from the screen
+                            this.parentNode.removeChild(this);
+                        }
+                    }
+                }
+                //apply the unfocus element to the screen
+                document.getElementById(skill.name + 'Div').appendChild(unFocusElement)
+            }
         }
-        document.getElementById(skill.name + 'Div').appendChild(element)
+        //add the focus element to the screen
+        document.getElementById(skill.name + 'Div').appendChild(focusElement);
 
     }
+
+    //update the attributes, as a new skill has leveled up as well
     let primaryAttributes = attributes.filter(type => type.type === 'Primary');
     for(let attribute of primaryAttributes) {
         for(let skillAttribute of skill.type) {
             if(skillAttribute === attribute.name) {
                 attribute.level = attribute.level + Math.round((skill.level / skill.type.length) / 4);
                 updateAttributes();
+                checkNextSkills();
             }
         }
     }
@@ -40,12 +81,14 @@ function updateSkills() {
             let elementText = skill.name + ' Level: ' + skill.level + '</br>CurrentXP/XPToLevel/XPPerSuccess</br>' + skill.currentXP + '/' + skill.XPToLevel + '/' + skill.XPPerSuccess;
             
             element.id = skill.name;
+            element.classList.add('skill')
             element.innerHTML = elementText;
             element.onclick = function() {
                 skill.currentXP = skill.currentXP + skill.XPPerSuccess
                 element.innerHTML = skill.name + ' Level: ' + skill.level + '</br>CurrentXP/XPToLevel/XPPerSuccess</br>' + skill.currentXP + '/' + skill.XPToLevel + '/' + skill.XPPerSuccess;;
                 if(skill.currentXP >= skill.XPToLevel) {
                     levelUpSkill(skill);
+                    updateAttributes();
                 }
             }
             wrapper.id = skill.name + 'Div';
@@ -83,37 +126,48 @@ function updateAttributes() {
 
 function updateInventory() {
     let inventoryDiv = document.getElementById('inventory');
-    console.log(Player.items)
 }
-
-function update() {
-    updateSkills();
-    updateAttributes();
-    updateInventory();
-    checkNextSkills();
-    if(currentFocus) {
-        document.getElementById(currentFocus.name).click();
-    }
-}
-
-function init() {
-    update();
-}
-
-init();
 
 function checkNextSkills() {
+    //might be useful to have an array of active skills to match against, and update that container
+    //instead of constantly calling filter when this is checked
     let checkUnavailableSkills = skills.filter(skill => skill.active === false);
     let checkAvailableSkills = skills.filter(skill => skill.active === true);
+    //iterates through every skill that is unavailable
     for(let skill of checkUnavailableSkills) {
-        for(let req of skill.requirements) {
-            for(let availSkill of checkAvailableSkills) {
-                if(availSkill.name === req.name && availSkill.level >= req.level) {
+        //if the skill has more than 1 requirement, common for later skills
+        if(skill.requirements.length > 1) {
+            //this container will hold TRUE items
+            //this container length will be checked against the skill requirements
+            let skillArr = [];
+
+            //first, iterate through the requirements of the skill
+            for(let reqSkill of skill.requirements) {
+                //then iterate through the available skills (that is, skills that are set to ACTIVE)
+                for(let availSkill of checkAvailableSkills) {
+                    //if the required skill matches in name and level, then push TRUE into skillArr array
+                    if(reqSkill.name === availSkill.name && availSkill.level >= reqSkill.level) {
+                        skillArr.push(true)
+                    }                    
+                }
+            }
+            //this checks the skillArr container, to see if all the skills are available
+            if(skillArr.length === skill.requirements.length) {
+                skill.active = true;
+                skill.level = 1;
+                updateSkills();
+            }
+        } 
+        //if the skill only has 1 requirement.
+        //single requirements are still in an array, just in case I need to change skills later
+        else {
+            for(let reqSkill of checkAvailableSkills) {
+                if(reqSkill.name === skill.requirements[0].name && reqSkill.level >= skill.requirements[0].level) {
                     skill.active = true;
                     skill.level = 1;
                     updateSkills();
                 }
-            }
+            }            
         }
     }
 }
@@ -162,13 +216,39 @@ function craftItem(item) {
     
 }
 
+//update function, gets called on every tick, and calls update functions for each element
+function update() {
+    updateSkills();
+    updateInventory();
+
+    //if there are skills in the focus list, click them
+    if(focusList) {
+        for(let skillFocus of focusList) {
+            document.getElementById(skillFocus.name).click();
+        }
+        
+    }
+}
+
+function callTick() {
+    setInterval(function() {
+        // checkNextSkills();
+        update();
+        
+        // craftItem('Fishing Pole');
+        // console.log(attributes)
+    }, 1000);
+}
+
+//the initialize function. Hardly does anything at the moment
+function init() {
+    callTick();
+    updateAttributes();
+}
+
+window.onload = (e) => {init()}
 //game tick
-setInterval(function() {
-    // checkNextSkills();
-    update();
-    // craftItem('Fishing Pole');
-    // console.log(attributes)
-}, 1000);
+
 
 
 //Random stuff that popped into my head that I may want to look at later
