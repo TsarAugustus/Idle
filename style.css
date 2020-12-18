@@ -72,7 +72,7 @@ body {
 }
 
 .focusElement:disabled {
-    background-color: red;
+    background-color: gray;
 }
 
 .unFocusElement {
@@ -84,4 +84,10 @@ body {
     outline: none;
     display: flex;
     width: 100%;
+}
+
+#interactiveSkill {
+    /* border: 1px solid black; */
+    display: flex;
+    /* height: 50%; */
 }

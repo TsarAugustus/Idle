@@ -98,6 +98,9 @@ function updateSkills() {
                     levelUpSkill(skill);
                     updateAttributes();
                 }
+                if(skill.specialSuccessFunction) {
+                    skill.specialSuccessFunction();
+                }
                 element.innerHTML = skill.name + ' Level: ' + skill.level + '</br>CurrentXP/XPToLevel/XPPerSuccess</br>' + skill.currentXP + '/' + skill.XPToLevel + '/' + (skill.XPPerSuccess + findAttributeLevel(skill.XPAttributeInc));
             }
             wrapper.id = skill.name + 'Div';
@@ -242,11 +245,11 @@ function checkFocuses() {
     let elements = document.getElementsByClassName('focusElement');
     if(focusList.length === focusAmount) {        
         for(let element of elements) {
-            element.disabled = true
+            element.disabled = true;
         }
     } else {
         for(let element of elements) {
-            element.disabled = false
+            element.disabled = false;
         }
     }
 }
@@ -271,6 +274,7 @@ function callTick() {
     setInterval(function() {
         // checkNextSkills();
         update();
+        console.log(Player.items)
         
         // craftItem('Fishing Pole');
         // console.log(attributes)

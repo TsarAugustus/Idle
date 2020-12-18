@@ -1,4 +1,7 @@
 import { attributes, findAttributeLevel} from './attributes.js';
+// import { items, findItem } from './items.js';
+import { basicMaterials } from './items/basicMaterials.js';
+import { Player, playerFind } from './player.js';
 export let skills = [
     //Basic skills, little or no previous requirements
     {
@@ -9,7 +12,19 @@ export let skills = [
         currentXP: 0,
         XPToLevel: 100,
         XPPerSuccess: 50,
-        XPAttributeInc: 'WIL'
+        XPAttributeInc: 'WIL',
+        specialSuccessFunction: function() {
+            let item = basicMaterials[Math.floor(Math.random() * basicMaterials.length)]
+            if(!playerFind(item.name)) {
+                Player.items.push({
+                    name: item.name,
+                    amount: 1
+                });
+            } else {
+                // console.log(playerFind(item.name))
+                playerFind(item.name).amount++;
+            }
+        }
     }, {
         name: 'Farming',
         type: ['WIL', 'STR', 'AGI'],

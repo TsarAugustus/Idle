@@ -1,11 +1,5 @@
 let Player = {
-    items: [{
-        name: 'Pole',
-        amount: 6
-    }, {
-        name: 'Thread',
-        amount: 3
-    }]
+    items: []
    
 }
 
