@@ -1,4 +1,4 @@
-import { items, findItem } from './items.js'
+import { attributes, findAttributeLevel} from './attributes.js';
 export let skills = [
     //Basic skills, little or no previous requirements
     {
@@ -8,10 +8,11 @@ export let skills = [
         active: true,
         currentXP: 0,
         XPToLevel: 100,
-        XPPerSuccess: 50
+        XPPerSuccess: 50,
+        XPAttributeInc: 'WIL'
     }, {
         name: 'Farming',
-        type: ['INT', 'STR', 'AGI'],
+        type: ['WIL', 'STR', 'AGI'],
         level: 0,
         requirements: [{
             name: 'Foraging',
@@ -20,7 +21,8 @@ export let skills = [
         active: false,
         currentXP: 0,
         XPToLevel: 100,
-        XPPerSuccess: 50
+        XPPerSuccess: 50,
+        XPAttributeInc: 'SPE'
     }, {
         name: 'Animal Husbandry',
         type: ['END', 'STR', 'AGI'],
@@ -32,7 +34,8 @@ export let skills = [
         active: false,
         currentXP: 0,
         XPToLevel: 100,
-        XPPerSuccess: 50
+        XPPerSuccess: 50,
+        XPAttributeInc: 'LOG'
     }, {
         name: 'Fishing',
         type: ['END', 'STR', 'LUC'],
@@ -44,10 +47,11 @@ export let skills = [
         active: false,
         currentXP: 0,
         XPToLevel: 100,
-        XPPerSuccess: 50
+        XPPerSuccess: 50,
+        XPAttributeInc: 'LUC'
     }, {
         name: 'Crafting',
-        type: ['INT', 'AGI'],
+        type: ['INT', 'AGI', 'LOG'],
         level: 0,
         active: false,
         requirements: [{
@@ -59,7 +63,8 @@ export let skills = [
         }],
         currentXP: 0,
         XPToLevel: 100,
-        XPPerSuccess: 50
+        XPPerSuccess: 50,
+        XPAttributeInc: 'SPE'
     }
 ];
 

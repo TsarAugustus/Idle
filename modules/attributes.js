@@ -118,15 +118,13 @@ let secondary = [{
     }
 }];
 
-function findAttributeLevel(attributeName) {
-    let attribute = attributes.find(function(attr) {
-        return attr.name === attributeName
-    });
-    return attribute.level;
-}
-
 
 for(let att in secondary) {
     attributes.push(secondary[att]);
 }
-export { attributes };
+
+function findAttributeLevel(attributeName) {
+    return attributes.find(attr => attr.name === attributeName).level;
+}
+
+export { attributes, findAttributeLevel};

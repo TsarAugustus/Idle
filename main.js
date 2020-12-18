@@ -1,5 +1,5 @@
 import { skills } from './modules/skills.js';
-import { attributes } from './modules/attributes.js';
+import { attributes, findAttributeLevel } from './modules/attributes.js';
 import { items, findItem } from './modules/items.js';
 import { Player, playerFind } from './modules/player.js';
 
@@ -12,6 +12,7 @@ function levelUpSkill(skill) {
     //level up the skill, and apply a new XPToLevel
     skill.level++;
     skill.XPToLevel = Math.round(skill.XPToLevel * 1.6);
+    skill.XPPerSuccess = skill.XPPerSuccess + findAttributeLevel(skill.XPAttributeInc);
 
     //this is the element for the focus buttons
     // the '2' here is arbitrary, and must be switched for something better later
@@ -65,12 +66,14 @@ function levelUpSkill(skill) {
     for(let attribute of primaryAttributes) {
         for(let skillAttribute of skill.type) {
             if(skillAttribute === attribute.name) {
-                attribute.level = attribute.level + Math.round((skill.level / skill.type.length) / 4);
-                updateAttributes();
-                checkNextSkills();
+                attribute.level = attribute.level + Math.round((skill.level / skill.type.length) / 4);  
             }
         }
     }
+    //update screen stuff
+    updateAttributes(); 
+    checkNextSkills();
+    updateSkills();
 }
 
 function updateSkills() {
@@ -80,22 +83,25 @@ function updateSkills() {
         if(!document.getElementById(skill.name)) {
             let wrapper = document.createElement('div');
             let element = document.createElement('button');
-            let elementText = skill.name + ' Level: ' + skill.level + '</br>CurrentXP/XPToLevel/XPPerSuccess</br>' + skill.currentXP + '/' + skill.XPToLevel + '/' + skill.XPPerSuccess;
+            let elementText = skill.name + ' Level: ' + skill.level + '</br>CurrentXP/XPToLevel/XPPerSuccess</br>' + skill.currentXP + '/' + skill.XPToLevel + '/' + (skill.XPPerSuccess + findAttributeLevel(skill.XPAttributeInc));
             
             element.id = skill.name;
             element.classList.add('skill')
             element.innerHTML = elementText;
             element.onclick = function() {
-                skill.currentXP = skill.currentXP + skill.XPPerSuccess
-                element.innerHTML = skill.name + ' Level: ' + skill.level + '</br>CurrentXP/XPToLevel/XPPerSuccess</br>' + skill.currentXP + '/' + skill.XPToLevel + '/' + skill.XPPerSuccess;;
+                skill.currentXP = skill.currentXP + skill.XPPerSuccess;
                 if(skill.currentXP >= skill.XPToLevel) {
                     levelUpSkill(skill);
                     updateAttributes();
                 }
+                element.innerHTML = skill.name + ' Level: ' + skill.level + '</br>CurrentXP/XPToLevel/XPPerSuccess</br>' + skill.currentXP + '/' + skill.XPToLevel + '/' + (skill.XPPerSuccess + findAttributeLevel(skill.XPAttributeInc));
             }
             wrapper.id = skill.name + 'Div';
             wrapper.appendChild(element)
             skillDiv.appendChild(wrapper);
+        } else {
+            document.getElementById(skill.name).innerHTML = skill.name + ' Level: ' + skill.level + '</br>CurrentXP/XPToLevel/XPPerSuccess</br>' + skill.currentXP + '/' + skill.XPToLevel + '/' + (skill.XPPerSuccess + findAttributeLevel(skill.XPAttributeInc));
+            // console.log(skill)
         }
     }
 }
@@ -157,7 +163,6 @@ function checkNextSkills() {
             if(skillArr.length === skill.requirements.length) {
                 skill.active = true;
                 skill.level = 1;
-                updateSkills();
             }
         } 
         //if the skill only has 1 requirement.
@@ -167,7 +172,6 @@ function checkNextSkills() {
                 if(reqSkill.name === skill.requirements[0].name && reqSkill.level >= skill.requirements[0].level) {
                     skill.active = true;
                     skill.level = 1;
-                    updateSkills();
                 }
             }            
         }
@@ -220,8 +224,9 @@ function craftItem(item) {
 
 //update function, gets called on every tick, and calls update functions for each element
 function update() {
-    updateSkills();
+    
     updateInventory();
+    
 
     //if there are skills in the focus list, click them
     if(focusList) {
@@ -244,8 +249,9 @@ function callTick() {
 
 //the initialize function. Hardly does anything at the moment
 function init() {
-    callTick();
     updateAttributes();
+    callTick();
+    updateSkills();    
 }
 
 window.onload = (e) => {init()}
