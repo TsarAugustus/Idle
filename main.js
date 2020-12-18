@@ -1,5 +1,5 @@
 import { skills } from './modules/skills.js';
-import { attributes, findAttributeLevel } from './modules/attributes.js';
+import { attributes, findAttributeLevel, findAttributeLongName } from './modules/attributes.js';
 import { items, findItem } from './modules/items.js';
 import { Player, playerFind } from './modules/player.js';
 
@@ -71,7 +71,7 @@ function levelUpSkill(skill) {
         }
     }
     //update screen stuff
-    updateAttributes(); 
+    updateAttributes(skill); 
     checkNextSkills();
     updateSkills();
     checkFocuses();
@@ -119,43 +119,60 @@ function updateSkills() {
     }
 }
 
-function updateAttributes() {
-    if(document.getElementById('Primary') || document.getElementById('Secondary')) {
-        document.getElementById('Primary').remove();
-        document.getElementById('Secondary').remove();
-    }
-
-    let attributeDiv = document.getElementById('attributes');
-
-    let primaryDiv = document.createElement('div');
-    let secondaryDiv = document.createElement('div');
-    primaryDiv.id = 'Primary';
-    secondaryDiv.id = 'Secondary';
-
-    //applys a header to the div
-    let primaryHeader = document.createElement('h3');
-    primaryHeader.innerHTML = 'Primary Attributes'
-    primaryDiv.appendChild(primaryHeader);
-    let secondaryHeader = document.createElement('h3');
-    secondaryHeader.innerHTML = 'Secondary Attributes'
-    secondaryDiv.appendChild(secondaryHeader);
-
-    
-    for(let attribute of attributes) {
-        let element = document.createElement('span');
-        if(attribute.type === 'Primary') {
-            element.innerHTML = attribute.longName + '/' + attribute.level;
-            primaryDiv.appendChild(element);
-        } else if(attribute.type === 'Secondary') {
-            attribute.level = attribute.calculate();
-            element.innerHTML = attribute.longName + '/' + attribute.level;
-            secondaryDiv.appendChild(element);
+function updateAttributes(skill) {
+    //the SKILL arguement is passed on levelup, otherwise it initializes the attributes from init. 
+    if(skill) {
+        for(let type of skill.type) {
+            document.getElementById(type).innerHTML = findAttributeLongName(type) + '/' + findAttributeLevel(type);
         }
+        //This should be handled better, but as it stands, I don't have a way of knowing which secondary attributes need to be updated
+        //TODO: fix this to be better
+        let secondaryAttributes = attributes.filter(attribute => attribute.type === 'Secondary');
+        for(let secondaryAttribute of secondaryAttributes) {
+            secondaryAttribute.level = secondaryAttribute.calculate();
+            document.getElementById(secondaryAttribute.name).innerHTML = secondaryAttribute.longName + '/' + secondaryAttribute.level;
+        }
+    } else {
+        //this is the initialization of attributes
+        //only gets called once  
+        let attributeDiv = document.getElementById('attributes');
+    
+        let primaryDiv = document.createElement('div');
+        let secondaryDiv = document.createElement('div');
+        primaryDiv.id = 'Primary';
+        secondaryDiv.id = 'Secondary';
+    
+        //applys a header to the div
+        let primaryHeader = document.createElement('h3');
+        primaryHeader.innerHTML = 'Primary Attributes'
+        primaryDiv.appendChild(primaryHeader);
+        let secondaryHeader = document.createElement('h3');
+        secondaryHeader.innerHTML = 'Secondary Attributes'
+        secondaryDiv.appendChild(secondaryHeader);
+    
+        //iterate through primary/secondary attributes
+        //order them in the proper div according to the type
+        //could be handled a bit more redundently
+        for(let attribute of attributes) {
+            let element = document.createElement('span');
+            if(attribute.type === 'Primary') {
+                element.innerHTML = attribute.longName + '/' + attribute.level;
+                element.id = attribute.name;
+                primaryDiv.appendChild(element);
+            } else if(attribute.type === 'Secondary') {
+                attribute.level = attribute.calculate();
+                element.innerHTML = attribute.longName + '/' + attribute.level;
+                element.id = attribute.name;
+                secondaryDiv.appendChild(element);
+            }
+        }
+        //appends the divs
+        attributeDiv.appendChild(primaryDiv);
+        attributeDiv.appendChild(secondaryDiv);
     }
-    attributeDiv.appendChild(primaryDiv);
-    attributeDiv.appendChild(secondaryDiv);
 }
 
+//doesn't do anything yet. This is next
 function updateInventory() {
     let inventoryDiv = document.getElementById('inventory');
 }
@@ -200,53 +217,54 @@ function checkNextSkills() {
             }            
         }
     }
+    //I want the checkfocuses function to be used sparringly, but also update the screen quickly
+    //TODO: find out a better way to handle this
     checkFocuses();
 }
 
+//the craft item function will most likely be moved to a different module
+//a lot of skills will have interactive elements like this, so it might be good to
+//have a skeleton function and pass the skill into it,but thats for later
 function craftItem(item) {
     //to craft an item, it merely will check if the player has its REQUIRES 
     let newItemInventory = [];
-    console.log('Finding item in Items module')
     let thisItem = findItem(item);
-    console.log(thisItem)
     for(let req of thisItem.requires) {
-        console.log('Finding required items for item')
         let reqItem = playerFind(req.name);
-        console.log('Checking if Player has enough')
         if(reqItem.amount >= req.amount) {
-            console.log('Player has enough for this item')
             newItemInventory.push({
                 name: req.name,
                 amount: reqItem.amount - req.amount
             });
         }
     }
-    console.log(newItemInventory)
+
     if(thisItem.requires.length === newItemInventory.length) {
-        console.log('Replacing inventory slots')
         for(let newItem of newItemInventory) {
-            console.log('Replacing slot ', newItem)
             playerFind(newItem.name).amount = newItem.amount;
 
         }
+        //if the item doesn't exist in the players inventory, add it
+        //I think I want to avoid the inventory, and instead have 
+        //the items count how many the player has, but seperation layers might help
+        // worthwhile to look into
         if(!playerFind(thisItem.name)) {
-            console.log('Doesnt exist')
             Player.items.push({
                 name: thisItem.name,
                 amount: 1
             });
-            console.log('Now exists? ', Player.items)
         } else {
-            console.log('Exists!');
             playerFind(thisItem.name).amount++;
         }
     } else {
         console.log('no good')
     }
-    console.log(Player.items)
     
 }
 
+//super simple function. Gets elements that have the 'focusElement' class
+// if the focus limit is hit, then it applys the disabled class to all focus buttons
+//else, the buttons are usable. Gets called on update
 function checkFocuses() {
     let elements = document.getElementsByClassName('focusElement');
     if(focusList.length === focusAmount) {        

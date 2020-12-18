@@ -143,8 +143,12 @@ for(let att in secondary) {
     attributes.push(secondary[att]);
 }
 
+function findAttributeLongName(attributeName) {
+    return attributes.find(attr => attr.name === attributeName).longName;
+}
+
 function findAttributeLevel(attributeName) {
     return attributes.find(attr => attr.name === attributeName).level;
 }
 
-export { attributes, findAttributeLevel};
+export { attributes, findAttributeLevel, findAttributeLongName};

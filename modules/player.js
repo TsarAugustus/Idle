@@ -3,6 +3,9 @@ let Player = {
    
 }
 
+//I think I want to merge the 'inventory'  with the items.
+//i should have an 'amount' property on the items, and they corrolates to
+//how much the player has on them
 let playerFind = function(item) {
     if(item === undefined) {
         // console.log(item)
