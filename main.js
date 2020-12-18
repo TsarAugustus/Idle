@@ -12,7 +12,6 @@ function levelUpSkill(skill) {
     //level up the skill, and apply a new XPToLevel
     skill.level++;
     skill.XPToLevel = Math.round(skill.XPToLevel * 1.6);
-    skill.XPPerSuccess = skill.XPPerSuccess + findAttributeLevel(skill.XPAttributeInc);
 
     //this is the element for the focus buttons
     // the '2' here is arbitrary, and must be switched for something better later
@@ -22,7 +21,7 @@ function levelUpSkill(skill) {
         let focusElement = document.createElement('button');
         focusElement.id = skill.name + 'Focus';
         focusElement.classList.add('focusElement');
-        focusElement.innerHTML = 'Focus on ' + skill.name;
+        focusElement.innerHTML = 'Focus';
         //the onclick function checks if the skill exists in the focus list
         //if it does, it doesnt apply the focus, as it is already being focused
         //likewise, if it doesnt exists, it pushes the skill to the focus list
@@ -87,28 +86,35 @@ function updateSkills() {
         if(!document.getElementById(skill.name)) {
             let wrapper = document.createElement('div');
             let element = document.createElement('button');
-            let elementText = skill.name + ' Level: ' + skill.level + '</br>CurrentXP/XPToLevel/XPPerSuccess</br>' + skill.currentXP + '/' + skill.XPToLevel + '/' + (skill.XPPerSuccess + findAttributeLevel(skill.XPAttributeInc));
+            let elementText = skill.name.replace(/\s/g, '</br>') + '</br>Level ' + skill.level + '</br>' + (skill.XPToLevel - skill.currentXP) + '/' + (skill.XPPerSuccess + findAttributeLevel(skill.XPAttributeInc));
             
             element.id = skill.name;
             element.classList.add('skill')
             element.innerHTML = elementText;
             element.onclick = function() {
-                skill.currentXP = skill.currentXP + skill.XPPerSuccess;
-                if(skill.currentXP >= skill.XPToLevel) {
-                    levelUpSkill(skill);
-                    updateAttributes();
+                let level;
+                skill.currentXP += (skill.XPPerSuccess + findAttributeLevel(skill.XPAttributeInc));
+                if(skill.currentXP > skill.XPToLevel) {
+                    let level = true;
+                    while(level) {
+                        levelUpSkill(skill)
+                        if(skill.currentXP < skill.XPToLevel) {
+                            level = false;
+                        }
+                    }
                 }
+                
                 if(skill.specialSuccessFunction) {
                     skill.specialSuccessFunction();
                 }
-                element.innerHTML = skill.name + ' Level: ' + skill.level + '</br>CurrentXP/XPToLevel/XPPerSuccess</br>' + skill.currentXP + '/' + skill.XPToLevel + '/' + (skill.XPPerSuccess + findAttributeLevel(skill.XPAttributeInc));
+                element.innerHTML = skill.name.replace(/\s/g, '</br>') + '</br>Level ' + skill.level + '</br>' + (skill.XPToLevel - skill.currentXP) + '/' + (skill.XPPerSuccess + findAttributeLevel(skill.XPAttributeInc));
             }
             wrapper.id = skill.name + 'Div';
             wrapper.classList.add('skillDiv')
             wrapper.appendChild(element)
             skillDiv.appendChild(wrapper);
         } else {
-            document.getElementById(skill.name).innerHTML = skill.name + ' Level: ' + skill.level + '</br>CurrentXP/XPToLevel/XPPerSuccess</br>' + skill.currentXP + '/' + skill.XPToLevel + '/' + (skill.XPPerSuccess + findAttributeLevel(skill.XPAttributeInc));
+            document.getElementById(skill.name).innerHTML = skill.name.replace(/\s/g, '</br>') + '</br>Level ' + skill.level + '</br>' + (skill.XPToLevel - skill.currentXP) + '/' + (skill.XPPerSuccess + findAttributeLevel(skill.XPAttributeInc));
         }
     }
 }
@@ -274,7 +280,6 @@ function callTick() {
     setInterval(function() {
         // checkNextSkills();
         update();
-        console.log(Player.items)
         
         // craftItem('Fishing Pole');
         // console.log(attributes)

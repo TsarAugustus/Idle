@@ -54,12 +54,15 @@ body {
 }
 
 .skillDiv {
+    min-height: 100%;
+    /* max-width: 100%; */
     /* border: 1px solid black; */
     /* width: 20%; */
 }
 
 #skillHeader {
     text-align: center;
+    border-bottom: 1px solid black;
 }
 
 

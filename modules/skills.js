@@ -11,7 +11,7 @@ export let skills = [
         active: true,
         currentXP: 0,
         XPToLevel: 100,
-        XPPerSuccess: 50,
+        XPPerSuccess: 25,
         XPAttributeInc: 'WIL',
         specialSuccessFunction: function() {
             let item = basicMaterials[Math.floor(Math.random() * basicMaterials.length)]
