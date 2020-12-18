@@ -16,7 +16,7 @@ function levelUpSkill(skill) {
     //this is the element for the focus buttons
     // the '2' here is arbitrary, and must be switched for something better later
     //this is just for prototyping
-    if(skill.level >= 2 & !document.getElementById(skill.name + 'Focus')) {
+    if(skill.level >= 2 & !document.getElementById(skill.name + 'UnFocus') && !document.getElementById(skill.name + 'Focus')) {
         //create the focus button next to each skill
         let focusElement = document.createElement('button');
         focusElement.id = skill.name + 'Focus';
@@ -33,6 +33,7 @@ function levelUpSkill(skill) {
                 focusList.push(skill);
                 document.getElementById(skill.name).classList.add('focus');
 
+                this.parentNode.removeChild(focusElement)
                 //the unfocus button
                 let unFocusElement = document.createElement('button');
                 unFocusElement.id = skill.name + 'UnFocus';
@@ -45,6 +46,7 @@ function levelUpSkill(skill) {
                             //remove this item from the focuslist
                             focusList.splice(focusedSkill, 1);
                             //this is used to remove the unfocus button from the screen
+                            document.getElementById(skill.name + 'Div').appendChild(focusElement);
                             this.parentNode.removeChild(this);
                         }
                     }
