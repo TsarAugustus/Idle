@@ -15,6 +15,12 @@ export let craftableItems = [{
     }, {
         name: 'Wood',
         amount: 2
+    }, {
+        name: 'Pole',
+        amount: 2
+    }, {
+        name: 'Thread',
+        amount: 2
     }]
 }, {
     name: 'Fireplace',

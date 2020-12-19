@@ -1,36 +1,23 @@
 export let craftingMaterials = [{
     name: 'Pole',
     type: 'Solid',
+    itemType: 'Material',
+    special: {
+        XPReturn: 5
+    },
     requires: [{
-        name: '*',
+        name: 'Wood',
         amount: 1
     }]
 }, {
     name: 'Thread',
     type: 'Tensile',
+    itemType: 'Material',
+    special: {
+        XPReturn: 5
+    },
     requires: [{
-        name: '*',
-        amount: 1
-    }]
-}, {
-    name: 'Wool',
-    type: 'Soft',
-    requires: [{
-        name: 'Sheep',
-        amount: 1
-    }]
-}, {
-    name: 'Ceramic',
-    type: 'Solid',
-    requires: [{
-        name: '*-SoftKiln', //* marks anything can be used, but with the - modifier, it will use anything after that as additional filtering
-        amount: 1           //because ceramic doesn't use solid materials for creation, it needs Soft and Kilnable items for creation
-    }]
-}, {
-    name: 'Thread',
-    type: 'Tensile',
-    requires: [{
-        name: null,
-        amount: null
+        name: 'Silk',
+        amount: '2'
     }]
 }]

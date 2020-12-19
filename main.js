@@ -38,7 +38,9 @@ function updateStockpile() {
             let elementText;
             if(item.special) {
                 elementText = item.name + ': ' + item.amount;
-                elementText += '</br>' + item.special.current.toFixed(1) + '/' + item.special.max;    
+                if(item.special.current && item.special.max) {
+                    elementText += '</br>' + item.special.current.toFixed(1) + '/' + item.special.max;       
+                }
                 
             } else {
                 elementText = item.name + ': ' + item.amount.toFixed(2);
@@ -50,7 +52,9 @@ function updateStockpile() {
             let elementText;
             if(item.special) {
                 elementText = item.name + ': ' + item.amount;
-                elementText += '</br>' + item.special.current.toFixed(1) + '/' + item.special.max;                
+                if(item.special.current && item.special.max) {
+                    elementText += '</br>' + item.special.current.toFixed(1) + '/' + item.special.max;       
+                }           
             } else {
                 elementText = item.name + ': ' + item.amount.toFixed(2);
             }

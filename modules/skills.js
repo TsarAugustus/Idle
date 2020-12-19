@@ -1,9 +1,10 @@
 import { attributes, findAttributeLevel, updateAttributes} from './attributes.js';
-import { craftItem } from './items.js';
 import { basicMaterials } from './items/basicMaterials.js';
+import { createCraftScreen } from './createCraftScreen.js';
 import { craftableItems } from './items/craftableItems.js';
+import { craftingMaterials } from './items/craftingMaterials.js';
 import { Player, playerFind } from './player.js';
-import { focusList, focusAmount } from '../main.js';
+import { levelUpSkill } from './levelUpSkill.js';
 
 //This will need to be broken up soon, into smaller pieces
 let skills = [
@@ -41,7 +42,7 @@ let skills = [
         currentXP: 0,
         XPToLevel: 100,
         XPPerSuccess: 50,
-        XPAttributeInc: 'SPE'
+        XPAttributeInc: 'SPE',
     }, {
         name: 'Animal Husbandry',
         type: ['END', 'STR', 'AGI'],
@@ -83,46 +84,8 @@ let skills = [
         XPAttributeInc: 'SPE',
         uniqueSkill: true,
         uniqueSkillFunction: function() {
-            if(document.getElementById('interaction')) {
-                let interaction = document.getElementById('interaction');
-                while (interaction.hasChildNodes()) {
-                    interaction.removeChild(interaction.lastChild);
-                }
-                interaction.remove();
-            }
-
-            let interactiveSkillDiv = document.getElementById('interactiveSkill');
-            let wrapper = document.createElement('div');
-            wrapper.id = 'interaction';
-            //find craftable items
-            for(let craftableItem of craftableItems) {
-                //If the craft menu doesnt exists, make it
-                //could be a function of its own, and passed for unique skills
-                //TODO: work on ^ idea
-                if(!document.getElementById(craftableItem.name.replace(/\s/g, '') + 'CraftButton')) {
-                    let element = document.createElement('button');
-                    element.id = craftableItem.name.replace(/\s/g, '') + 'CraftButton';
-                    element.name = craftableItem.name.replace(/\s/g, '-');
-                    let elementText = craftableItem.name;
-                    for(let reqItem of craftableItem.requires) {
-                        elementText += '</br>' + reqItem.name + '/' + reqItem.amount;
-                    }
-                    element.innerHTML = elementText;
-                    element.onclick = function() {
-                        if(craftItem(craftableItem.name)) {
-                            
-                            let crafting = skills.find(skill => skill.name === 'Crafting');
-                            crafting.currentXP += craftableItem.special.XPReturn;
-                            if(crafting.currentXP >= crafting.XPToLevel) {
-                                levelUpSkill(crafting);
-                            }
-
-                        }
-                    }
-                    wrapper.appendChild(element);
-                }
-            }
-            interactiveSkillDiv.appendChild(wrapper);
+            createCraftScreen([craftableItems, craftingMaterials]);
+            // createCraftScreen(craftingMaterials);
         }
     },
     {
@@ -143,70 +106,6 @@ let skills = [
         XPAttributeInc: 'SPE'
     }
 ];
-
-//this function is called when a skill levels up, from the updateSkills function
-function levelUpSkill(skill) {
-    //level up the skill, and apply a new XPToLevel
-    skill.level++;
-    skill.XPToLevel = Math.round(skill.XPToLevel * 1.6);
-
-    //this is the element for the focus buttons
-    // the '2' here is arbitrary, and must be switched for something better later
-    //this is just for prototyping
-    if(!skill.uniqueSkill && skill.level >= 2 & !document.getElementById(skill.name + 'UnFocus') && !document.getElementById(skill.name + 'Focus')) {
-        //create the focus button next to each skill
-        let focusElement = document.createElement('button');
-        focusElement.id = skill.name + 'Focus';
-        focusElement.classList.add('focusElement');
-        focusElement.innerHTML = 'Focus';
-        //the onclick function checks if the skill exists in the focus list
-        //if it does, it doesnt apply the focus, as it is already being focused
-        //likewise, if it doesnt exists, it pushes the skill to the focus list
-        focusElement.onclick = function() {
-            let focusListSkill = focusList.find(skillItem => skillItem.name === skill.name);
-            if(!focusListSkill && focusList.length < focusAmount) {
-                focusList.push(skill);
-                document.getElementById(skill.name).classList.add('focus');
-
-                this.parentNode.removeChild(focusElement)
-                //the unfocus button
-                let unFocusElement = document.createElement('button');
-                unFocusElement.id = skill.name + 'UnFocus';
-                unFocusElement.classList.add('UnfocusElement');
-                unFocusElement.innerHTML = 'Unfocus';
-                unFocusElement.onclick = function() {
-                    for(let focusedSkill in focusList) {
-                        if(focusList[focusedSkill].name === skill.name) {
-                            //remove the focus class
-                            document.getElementById(skill.name).classList.remove('focus');
-                            //remove this item from the focuslist
-                            focusList.splice(focusedSkill, 1);
-                            //this is used to remove the unfocus button from the screen
-                            document.getElementById(skill.name + 'Div').appendChild(focusElement);
-                            this.parentNode.removeChild(this);
-                        }
-                    }
-                }
-                //apply the unfocus element to the screen
-                document.getElementById(skill.name + 'Div').appendChild(unFocusElement);
-            }
-        }
-        //add the focus element to the screen
-        document.getElementById(skill.name + 'Div').appendChild(focusElement);
-
-    }
-
-    //update the attributes, as a new skill has leveled up as well
-    let primaryAttributes = attributes.filter(type => type.type === 'Primary');
-    for(let attribute of primaryAttributes) {
-        for(let skillAttribute of skill.type) {
-            if(skillAttribute === attribute.name) {
-                attribute.level = attribute.level + Math.round((skill.level / skill.type.length) / 4);  
-            }
-        }
-    }
-    updateAttributes(skill); 
-}
 
 function updateSkills() {
     let skillDiv = document.getElementById('skills');
