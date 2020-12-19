@@ -32,4 +32,12 @@ export let basicMaterials = [{
         name: null,
         amount: null
     }]
+}, {
+    name: 'Wood',
+    type: 'Solid',
+    itemType: 'Basic',
+    requires: [{
+        name: null,
+        amount: null
+    }]
 }];

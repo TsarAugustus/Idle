@@ -1,5 +1,5 @@
 import { attributes, findAttributeLevel, updateAttributes} from './attributes.js';
-// import { items, findItem } from './items.js';
+import { craftItem } from './items.js';
 import { basicMaterials } from './items/basicMaterials.js';
 import { craftableItems } from './items/craftableItems.js';
 import { Player, playerFind } from './player.js';
@@ -22,11 +22,11 @@ let skills = [
             if(!playerFind(item.name)) {
                 Player.items.push({
                     name: item.name,
-                    amount: 1,
+                    amount: Math.random() * 1,
                     itemType: item.itemType
                 });
             } else {
-                playerFind(item.name).amount++;
+                playerFind(item.name).amount += Math.random() * 1;
             }
         }
     }, {
@@ -98,13 +98,22 @@ let skills = [
                 if(!document.getElementById(craftableItem.name.replace(/\s/g, '') + 'CraftButton')) {
                     let element = document.createElement('button');
                     element.id = craftableItem.name.replace(/\s/g, '') + 'CraftButton';
+                    element.name = craftableItem.name.replace(/\s/g, '-');
                     let elementText = craftableItem.name;
                     for(let reqItem of craftableItem.requires) {
                         elementText += '</br>' + reqItem.name + '/' + reqItem.amount;
                     }
                     element.innerHTML = elementText;
                     element.onclick = function() {
-                        console.log(craftItem)
+                        if(craftItem(craftableItem.name)) {
+                            let crafting = skills.find(skill => skill.name === 'Crafting')
+                            crafting.currentXP += crafting.XPPerSuccess;
+                            if(crafting.currentXP >= crafting.XPToLevel) {
+                                levelUpSkill(crafting);
+                            }
+
+                        }
+                        // craftItem(craftableItem.name);
                     }
                     wrapper.appendChild(element);
                 }

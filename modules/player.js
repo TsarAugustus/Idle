@@ -17,5 +17,8 @@ let playerFind = function(item) {
     }
 }
 
+function updateTickItems() {
+    console.log(Player)
+}
 
-export { Player, playerFind }
+export { Player, playerFind, updateTickItems }
