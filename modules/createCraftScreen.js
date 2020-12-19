@@ -69,6 +69,7 @@ export function createCraftScreen(args) {
     let interactiveSkillDiv = document.getElementById('interactiveSkill');
     let wrapper = document.createElement('div');
     wrapper.id = 'interaction';
+    wrapper.innerHTML = '<h3>Crafting Screen</h3>'
     interactiveSkillDiv.appendChild(wrapper);
     //find craftable items
     for(let craft of args ) {
@@ -81,7 +82,7 @@ export function createCraftScreen(args) {
                 document.getElementById('interaction').appendChild(craftDivWrapper);
             }
             if(!document.getElementById(item.itemType + 'Header')) {
-                let craftItemHeader = document.createElement('h3');
+                let craftItemHeader = document.createElement('h2');
                 craftItemHeader.id = item.itemType + 'Header';
                 craftItemHeader.innerHTML = item.itemType + ' related';
                 document.getElementById(item.itemType + 'CraftDivWrapper').appendChild(craftItemHeader);

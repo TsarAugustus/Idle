@@ -122,7 +122,8 @@ function updateSkills() {
                 let element = document.createElement('span');
                 element.id = skill.name;
                 element.classList.add('skill');
-                elementText = elementText + '</br>Click me'
+                element.classList.add('uniqueSkill');
+                elementText = 'Open ' + elementText;
                 element.onclick = function() {
                     skill.uniqueSkillFunction();
                 }
@@ -179,10 +180,12 @@ function updateSkills() {
             }
             
         } else {
-            let text = skill.name.replace(/\s/g, ' ') + '</br>Level ' + skill.level + '</br>' + skill.currentXP + '/' + skill.XPToLevel;
+            let text = '';
             if(skill.uniqueSkill) {
-                text += '</br> Click me'
+                text += 'Open '
+                document.getElementById(skill.name).classList.add('uniqueSkill')
             }
+            text += skill.name.replace(/\s/g, ' ') + '</br>Level ' + skill.level + '</br>' + skill.currentXP + '/' + skill.XPToLevel;
             document.getElementById(skill.name).innerHTML = text;
             
         }

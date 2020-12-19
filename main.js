@@ -4,7 +4,7 @@ import { items, findItem } from './modules/items.js';
 import { Player, playerFind, updateTickItems } from './modules/player.js';
 
 //some variables for the focus buttons
-let focusAmount = 2;
+let focusAmount = 1;
 let focusList = [];
 
 //Currently gets called every tick. 

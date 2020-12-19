@@ -1,6 +1,8 @@
 body {
     display: flex;
     flex-wrap: wrap;
+    max-height: 100vh;
+    /* overflow-y: hidden; */
     /* overflow-x: hidden; */
 }
 
@@ -14,8 +16,19 @@ body {
 
 #down {
     /* border: 1px solid black; */
-    width: 100%;
+    width: 50%;
+    display: flex;
+    text-align: center;
+    justify-content: flex-end;
     /* height: 10%; */
+}
+
+#interaction {
+    padding: 2em;
+    border: 1px solid gray;
+    border-radius: 2em;
+    max-height: 30vh;
+    overflow-y: scroll;
 }
 
 #stockpile {
@@ -26,6 +39,8 @@ body {
     flex-direction: column;
     width: 30%;
     /* flex-grow: 1; */
+    max-height: 40vh;
+    overflow-y: scroll;
 }
 
 #stockpile h3 {
@@ -98,6 +113,12 @@ body {
     flex-direction: row;
     overflow-x: auto;
     /* justify-content: flex-end; */
+}
+
+.uniqueSkill {
+    padding: 0.5em;
+    border: 1px solid black;
+    border-radius: 0.2em;
 }
 
 .skillDiv {
