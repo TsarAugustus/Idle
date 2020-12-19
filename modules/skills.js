@@ -1,6 +1,7 @@
 import { attributes, findAttributeLevel} from './attributes.js';
 // import { items, findItem } from './items.js';
 import { basicMaterials } from './items/basicMaterials.js';
+import { craftableItems } from './items/craftableItems.js';
 import { Player, playerFind } from './player.js';
 export let skills = [
     //Basic skills, little or no previous requirements
@@ -22,7 +23,6 @@ export let skills = [
                     itemType: item.itemType
                 });
             } else {
-                // console.log(playerFind(item.name))
                 playerFind(item.name).amount++;
             }
         }
@@ -80,8 +80,34 @@ export let skills = [
         XPAttributeInc: 'SPE',
         uniqueSkill: true,
         uniqueSkillFunction: function() {
-            console.log('yooo')
-            return 'hi'
+            if(document.getElementById('interaction')) {
+                let interaction = document.getElementById('interaction');
+                while (interaction.hasChildNodes()) {
+                    interaction.removeChild(interaction.lastChild);
+                }
+                interaction.remove();
+            }
+
+            let interactiveSkillDiv = document.getElementById('interactiveSkill');
+            let wrapper = document.createElement('div');
+            wrapper.id = 'interaction';
+            for(let craftableItem of craftableItems) {
+                if(!document.getElementById(craftableItem.name.replace(/\s/g, '') + 'CraftButton')) {
+                    let element = document.createElement('button');
+                    element.id = craftableItem.name.replace(/\s/g, '') + 'CraftButton';
+                    let elementText = craftableItem.name;
+                    for(let reqItem of craftableItem.requires) {
+                        elementText += '</br>' + reqItem.name + '/' + reqItem.amount;
+                    }
+                    element.innerHTML = elementText;
+                    element.onclick = function() {
+                        console.log(craftItem)
+                    }
+                    wrapper.appendChild(element);
+                }
+            }
+            interactiveSkillDiv.appendChild(wrapper)
+            // return 'hi'
         }
     },
     {

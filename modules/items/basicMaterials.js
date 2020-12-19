@@ -20,7 +20,14 @@ export let basicMaterials = [{
     name: 'Silk',
     type: 'Tensile',
     itemType: 'Basic',
-    kiln: true,
+    requires: [{
+        name: null,
+        amount: null
+    }]
+}, {
+    name: 'Leaves',
+    type: 'Tensile',
+    itemType: 'Basic',
     requires: [{
         name: null,
         amount: null

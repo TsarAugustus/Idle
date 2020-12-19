@@ -28,6 +28,16 @@ body {
     /* flex-grow: 1; */
 }
 
+#stockpile h3 {
+    border-bottom: 1px solid black
+}
+
+#stockpile p {
+    padding: 0;
+    margin: 0;
+    border-bottom: 1px solid black;
+}
+
 .column {
     display: flex;
     flex-direction: column;
@@ -49,11 +59,19 @@ body {
     flex-direction: column;
 }
 
+#Primary h3 {
+    border-bottom: 1px solid black;
+}
+
 #Secondary {
     /* border: 1px solid black; */
     display: flex;
     flex: 1 0 50%;
     flex-direction: column;
+}
+
+#Secondary h3 {
+    border-bottom: 1px solid black;
 }
 
 #right {
