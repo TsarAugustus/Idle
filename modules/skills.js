@@ -94,7 +94,11 @@ let skills = [
             let interactiveSkillDiv = document.getElementById('interactiveSkill');
             let wrapper = document.createElement('div');
             wrapper.id = 'interaction';
+            //find craftable items
             for(let craftableItem of craftableItems) {
+                //If the craft menu doesnt exists, make it
+                //could be a function of its own, and passed for unique skills
+                //TODO: work on ^ idea
                 if(!document.getElementById(craftableItem.name.replace(/\s/g, '') + 'CraftButton')) {
                     let element = document.createElement('button');
                     element.id = craftableItem.name.replace(/\s/g, '') + 'CraftButton';
@@ -106,20 +110,19 @@ let skills = [
                     element.innerHTML = elementText;
                     element.onclick = function() {
                         if(craftItem(craftableItem.name)) {
-                            let crafting = skills.find(skill => skill.name === 'Crafting')
-                            crafting.currentXP += crafting.XPPerSuccess;
+                            
+                            let crafting = skills.find(skill => skill.name === 'Crafting');
+                            crafting.currentXP += craftableItem.special.XPReturn;
                             if(crafting.currentXP >= crafting.XPToLevel) {
                                 levelUpSkill(crafting);
                             }
 
                         }
-                        // craftItem(craftableItem.name);
                     }
                     wrapper.appendChild(element);
                 }
             }
-            interactiveSkillDiv.appendChild(wrapper)
-            // return 'hi'
+            interactiveSkillDiv.appendChild(wrapper);
         }
     },
     {
@@ -150,7 +153,7 @@ function levelUpSkill(skill) {
     //this is the element for the focus buttons
     // the '2' here is arbitrary, and must be switched for something better later
     //this is just for prototyping
-    if(skill.level >= 2 & !document.getElementById(skill.name + 'UnFocus') && !document.getElementById(skill.name + 'Focus')) {
+    if(!skill.uniqueSkill && skill.level >= 2 & !document.getElementById(skill.name + 'UnFocus') && !document.getElementById(skill.name + 'Focus')) {
         //create the focus button next to each skill
         let focusElement = document.createElement('button');
         focusElement.id = skill.name + 'Focus';
@@ -213,7 +216,7 @@ function updateSkills() {
         if(!document.getElementById(skill.name)) {
 
             let wrapper = document.createElement('div');
-            let elementText = skill.name.replace(/\s/g, '</br>') + '</br>Level ' + skill.level + '</br>' + (skill.XPToLevel - skill.currentXP) + '/' + (skill.XPPerSuccess + findAttributeLevel(skill.XPAttributeInc));
+            let elementText = skill.name.replace(/\s/g, ' ') + '</br>Level ' + skill.level + '</br>' + skill.currentXP + '/' + skill.XPToLevel;
             let newElement;
 
             if(skill.uniqueSkill) {
@@ -248,7 +251,7 @@ function updateSkills() {
                     if(skill.specialSuccessFunction) {
                         skill.specialSuccessFunction();
                     }
-                    element.innerHTML = skill.name.replace(/\s/g, '</br>') + '</br>Level ' + skill.level + '</br>' + (skill.XPToLevel - skill.currentXP) + '/' + (skill.XPPerSuccess + findAttributeLevel(skill.XPAttributeInc));
+                    element.innerHTML = skill.name.replace(/\s/g, ' ') + '</br>Level ' + skill.level + '</br>' + skill.currentXP + '/' + skill.XPToLevel;
                 }
                 newElement = element;
             }
@@ -277,7 +280,7 @@ function updateSkills() {
             }
             
         } else {
-            let text = skill.name.replace(/\s/g, '</br>') + '</br>Level ' + skill.level + '</br>' + (skill.XPToLevel - skill.currentXP) + '/' + (skill.XPPerSuccess + findAttributeLevel(skill.XPAttributeInc));
+            let text = skill.name.replace(/\s/g, ' ') + '</br>Level ' + skill.level + '</br>' + skill.currentXP + '/' + skill.XPToLevel;
             if(skill.uniqueSkill) {
                 text += '</br> Click me'
             }

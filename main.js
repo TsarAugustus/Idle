@@ -19,7 +19,6 @@ function updateStockpile() {
         if(!document.getElementById(item.name + 'StockpileDiv')) {
             //this is used for client side organization
             if(!document.getElementById(itemType.itemType + 'WrapperDiv')) {
-                console.log(itemType)
                 let wrapper = document.createElement('div');
                 wrapper.id = itemType.itemType + 'WrapperDiv';
                 wrapper.classList.add('column');
@@ -31,31 +30,31 @@ function updateStockpile() {
                 wrapper.appendChild(element);
                 stockpileDiv.appendChild(wrapper);
             }
-            
-            if(!itemType.special) {
-                let itemWrapper = document.getElementById(itemType.itemType + 'WrapperDiv');
-                let element = document.createElement('span');
-                element.innerHTML = item.name + '/' + item.amount.toFixed(2);
-                element.id = item.name + 'StockpileDiv';
-                itemWrapper.appendChild(element);
+
+            //writes stockpile to div
+            let itemWrapper = document.getElementById(itemType.itemType + 'WrapperDiv');
+            let element = document.createElement('span');
+            element.id = item.name + 'StockpileDiv';
+            let elementText;
+            if(item.special) {
+                elementText = item.name + ': ' + item.amount;
+                elementText += '</br>' + item.special.current.toFixed(1) + '/' + item.special.max;    
+                
             } else {
-                let itemWrapper = document.getElementById(itemType.itemType + 'WrapperDiv');
-                let element = document.createElement('span');
-                element.innerHTML = item.name + '</br>' + itemType.special.current.toFixed(2) + '/' + itemType.special.max.toFixed(2);
-                element.id = item.name + 'StockpileDiv';
-                itemWrapper.appendChild(element);
+                elementText = item.name + ': ' + item.amount.toFixed(2);
             }
+            itemWrapper.appendChild(element);        
             
         } else {
-            //update if it does exist
-            if(!itemType.special) {
-                document.getElementById(item.name + 'StockpileDiv').innerHTML = item.name + '/' + item.amount.toFixed(2);
+            let itemStockPileDiv = document.getElementById(item.name + 'StockpileDiv');
+            let elementText;
+            if(item.special) {
+                elementText = item.name + ': ' + item.amount;
+                elementText += '</br>' + item.special.current.toFixed(1) + '/' + item.special.max;                
             } else {
-                if(itemType.special.current < itemType.special.max) {
-                    itemType.special.current += itemType.special.inc;
-                }                
-                document.getElementById(item.name + 'StockpileDiv').innerHTML = item.name + '</br>' + itemType.special.current.toFixed(2) + '/' + itemType.special.max.toFixed(2);
+                elementText = item.name + ': ' + item.amount.toFixed(2);
             }
+            itemStockPileDiv.innerHTML = elementText;
         }
     }
 }
@@ -81,12 +80,13 @@ function checkFocuses() {
 function update() {
     
     //update screen stuff
+    updateTickItems();
     updateStockpile();
     checkFocuses();
     checkNextSkills();
     updateSkills();
 
-    updateTickItems();
+    
     
 
     //if there are skills in the focus list, click them
@@ -99,11 +99,7 @@ function update() {
 
 function callTick() {
     setInterval(function() {
-        // checkNextSkills();
         update();
-        
-        // craftItem('Fishing Pole');
-        // console.log(attributes)
     }, 1000);
 }
 
@@ -115,10 +111,7 @@ function init() {
 }
 
 window.onload = (e) => {init()}
-//game tick
-
-
-
+export { focusList, focusAmount}
 //Random stuff that popped into my head that I may want to look at later
 
 //hypothermia
@@ -143,5 +136,3 @@ window.onload = (e) => {init()}
 //eg, animalHusbandry skill animals<pen<male&female animals
 //eg, hunting skill projectile(type)<projectileLauncher
 //eg, fishing skill fishingPole<pole(wooden)&&fishingLine<thread(silk,nylon, etc)
-
-export { focusList, focusAmount}

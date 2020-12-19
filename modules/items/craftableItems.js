@@ -6,7 +6,8 @@ export let craftableItems = [{
     special: {
         max: 100,
         inc: 1,
-        current: 0
+        current: 0,
+        XPReturn: 30
     },
     requires: [{
         name: 'Leaves',
@@ -14,5 +15,24 @@ export let craftableItems = [{
     }, {
         name: 'Wood',
         amount: 2
+    }]
+}, {
+    name: 'Fireplace',
+    type: 'Solid',
+    itemType: 'Civ',
+    amount: 0,
+    special: {
+        max: 100,
+        min: 0,
+        inc: -1,
+        current: 100,
+        XPReturn: 30
+    },
+    requires: [{
+        name: 'Leaves',
+        amount: 1
+    }, {
+        name: 'Wood',
+        amount: 1
     }]
 }];

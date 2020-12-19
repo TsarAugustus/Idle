@@ -38,7 +38,6 @@ function craftItem(item) {
     //to craft an item, it merely will check if the player has its REQUIRES 
     let newItemStockpile = [];
     let thisItem = findItem(item);
-    console.log(thisItem, item)
     for(let req of thisItem.requires) {
         let reqItem = playerFind(req.name);
         if(reqItem.amount >= req.amount) {
@@ -61,21 +60,23 @@ function craftItem(item) {
         if(!playerFind(thisItem.name)) {
             Player.items.push({
                 name: thisItem.name,
-                amount: 1
+                amount: 1,
+                special: thisItem.special
             });
         } else {
             let item = playerFind(thisItem.name);
             item.amount++;
-            if(thisItem.special) {
-                console.log('here', thisItem, item)
-                thisItem.special.max = item.amount * 100;
+            if(thisItem.special.inc < 0) {
+                thisItem.special.inc = -1 / item.amount;
+                thisItem.special.max = 100 * item.amount;
+            } else {
                 thisItem.special.inc = 1 * item.amount;
+                thisItem.special.max = 100 * item.amount;
             }
         }
         return true;
     } else {
         return false;
-        // console.log('no good')
     }
     
 }
