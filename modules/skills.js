@@ -18,7 +18,8 @@ export let skills = [
             if(!playerFind(item.name)) {
                 Player.items.push({
                     name: item.name,
-                    amount: 1
+                    amount: 1,
+                    itemType: item.itemType
                 });
             } else {
                 // console.log(playerFind(item.name))
@@ -71,15 +72,17 @@ export let skills = [
         active: false,
         requirements: [{
             name: 'Foraging',
-            level: 5
-        }, {
-            name: 'Farming',
-            level: 5
+            level: 2
         }],
         currentXP: 0,
         XPToLevel: 100,
         XPPerSuccess: 50,
-        XPAttributeInc: 'SPE'
+        XPAttributeInc: 'SPE',
+        uniqueSkill: true,
+        uniqueSkillFunction: function() {
+            console.log('yooo')
+            return 'hi'
+        }
     },
     {
         name: 'Hunting',

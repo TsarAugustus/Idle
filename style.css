@@ -1,5 +1,6 @@
 body {
     display: flex;
+    flex-wrap: wrap;
     /* overflow-x: hidden; */
 }
 
@@ -7,19 +8,38 @@ body {
     /* border: 1px solid blue; */
     display: flex;
     flex: 1 0 40%;
-    flex-direction: column;
+    flex-direction: row;
     /* flex-wrap: wrap; */
 }
 
-#inventory {
+#down {
+    border: 1px solid black;
+    width: 100%;
+    /* height: 10%; */
+}
+
+#stockpile {
     display: flex;
-    /* flex-grow: 2; */
+    /* border: 1px solid black; */
+    text-align: center;
+    justify-content: flex-start;
+    flex-direction: column;
+    width: 30%;
+    /* flex-grow: 1; */
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
 }
 
 #attributes {
     display: flex;
     text-align: center;
-    /* flex-grow: 1; */
+    width: 70%;
+
+    /* border: 1px solid black; */
+    /* flex-grow: ; */
 }
 
 #Primary {
@@ -53,6 +73,15 @@ body {
     /* justify-content: flex-end; */
 }
 
+#uniqueSkills {
+    /* border: 1px solid black; */
+    /* width: 100%; */
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    /* justify-content: flex-end; */
+}
+
 .skillDiv {
     min-height: 100%;
     /* max-width: 100%; */
@@ -61,6 +90,11 @@ body {
 }
 
 #skillHeader {
+    text-align: center;
+    border-bottom: 1px solid black;
+}
+
+#uniqueSkillHeader {
     text-align: center;
     border-bottom: 1px solid black;
 }

@@ -27,14 +27,7 @@ export let craftingMaterials = [{
         amount: 1           //because ceramic doesn't use solid materials for creation, it needs Soft and Kilnable items for creation
     }]
 }, {
-    name: 'Silk',
-    type: 'Tensile',
-    requires: [{
-        name: null,
-        amount: null
-    }]
-}, {
-    name: 'Nylon',
+    name: 'Thread',
     type: 'Tensile',
     requires: [{
         name: null,

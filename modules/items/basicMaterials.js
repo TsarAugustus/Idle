@@ -1,6 +1,7 @@
 export let basicMaterials = [{
     name: 'Clay',
     type: 'Soft',
+    itemType: 'Basic',
     kiln: true,
     requires: [{
         name: null,
@@ -9,6 +10,7 @@ export let basicMaterials = [{
 }, {
     name: 'Stone',
     type: 'Solid',
+    itemType: 'Basic',
     kiln: true,
     requires: [{
         name: null,
@@ -17,6 +19,7 @@ export let basicMaterials = [{
 }, {
     name: 'Silk',
     type: 'Tensile',
+    itemType: 'Basic',
     kiln: true,
     requires: [{
         name: null,

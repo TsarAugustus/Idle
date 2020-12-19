@@ -84,37 +84,78 @@ function updateSkills() {
     let activeSkills = skills.filter(skill => skill.active === true);
     for(let skill of activeSkills) {
         if(!document.getElementById(skill.name)) {
+
             let wrapper = document.createElement('div');
-            let element = document.createElement('button');
             let elementText = skill.name.replace(/\s/g, '</br>') + '</br>Level ' + skill.level + '</br>' + (skill.XPToLevel - skill.currentXP) + '/' + (skill.XPPerSuccess + findAttributeLevel(skill.XPAttributeInc));
-            
-            element.id = skill.name;
-            element.classList.add('skill')
-            element.innerHTML = elementText;
-            element.onclick = function() {
-                let level;
-                skill.currentXP += (skill.XPPerSuccess + findAttributeLevel(skill.XPAttributeInc));
-                if(skill.currentXP > skill.XPToLevel) {
-                    let level = true;
-                    while(level) {
-                        levelUpSkill(skill)
-                        if(skill.currentXP < skill.XPToLevel) {
-                            level = false;
+            let newElement;
+
+            if(skill.uniqueSkill) {
+                let element = document.createElement('span');
+                element.id = skill.name;
+                element.classList.add('skill');
+                elementText = elementText + '</br>Click me'
+                element.onclick = function() {
+                    skill.uniqueSkillFunction();
+                }
+                newElement = element;
+            } else {
+                let element = document.createElement('button');
+                element.id = skill.name;
+                element.classList.add('skill');
+                element.onclick = function() {
+                    let level;
+                    skill.currentXP += (skill.XPPerSuccess + findAttributeLevel(skill.XPAttributeInc));
+                    //If the current skill xp is higher than it takes to level, it goes through a while loop
+                    //it immediately levels the skill, then will check if additional levels are needed 
+                    //(eg, if the XPSuccess is higher than the xptolevel)
+                    if(skill.currentXP > skill.XPToLevel) {
+                        let level = true;
+                        while(level) {
+                            levelUpSkill(skill)
+                            if(skill.currentXP < skill.XPToLevel) {
+                                level = false;
+                            }
                         }
                     }
+                    
+                    if(skill.specialSuccessFunction) {
+                        skill.specialSuccessFunction();
+                    }
+                    element.innerHTML = skill.name.replace(/\s/g, '</br>') + '</br>Level ' + skill.level + '</br>' + (skill.XPToLevel - skill.currentXP) + '/' + (skill.XPPerSuccess + findAttributeLevel(skill.XPAttributeInc));
                 }
-                
-                if(skill.specialSuccessFunction) {
-                    skill.specialSuccessFunction();
-                }
-                element.innerHTML = skill.name.replace(/\s/g, '</br>') + '</br>Level ' + skill.level + '</br>' + (skill.XPToLevel - skill.currentXP) + '/' + (skill.XPPerSuccess + findAttributeLevel(skill.XPAttributeInc));
+                newElement = element;
             }
+
+            newElement.innerHTML = elementText;
             wrapper.id = skill.name + 'Div';
             wrapper.classList.add('skillDiv')
-            wrapper.appendChild(element)
-            skillDiv.appendChild(wrapper);
+            wrapper.appendChild(newElement)
+
+            if(!skill.uniqueSkill) {
+                skillDiv.appendChild(wrapper);
+            } else {
+                let rightSide = document.getElementById('right');
+                if(!document.getElementById('uniqueSkillHeader')) {
+                    let header = document.createElement('h3');
+                    header.innerHTML = 'Unique Skills';
+                    header.id = 'uniqueSkillHeader';
+                    rightSide.appendChild(header);
+                }
+                if(!document.getElementById('uniqueSkills')) {
+                    let uniqueSkillDiv = document.createElement('div');
+                    uniqueSkillDiv.id = 'uniqueSkills';
+                    rightSide.appendChild(uniqueSkillDiv);
+                }
+                document.getElementById('uniqueSkills').appendChild(wrapper);
+            }
+            
         } else {
-            document.getElementById(skill.name).innerHTML = skill.name.replace(/\s/g, '</br>') + '</br>Level ' + skill.level + '</br>' + (skill.XPToLevel - skill.currentXP) + '/' + (skill.XPPerSuccess + findAttributeLevel(skill.XPAttributeInc));
+            let text = skill.name.replace(/\s/g, '</br>') + '</br>Level ' + skill.level + '</br>' + (skill.XPToLevel - skill.currentXP) + '/' + (skill.XPPerSuccess + findAttributeLevel(skill.XPAttributeInc));
+            if(skill.uniqueSkill) {
+                text += '</br> Click me'
+            }
+            document.getElementById(skill.name).innerHTML = text;
+            
         }
     }
 }
@@ -172,9 +213,40 @@ function updateAttributes(skill) {
     }
 }
 
-//doesn't do anything yet. This is next
-function updateInventory() {
-    let inventoryDiv = document.getElementById('inventory');
+//Currently gets called every tick. 
+function updateStockpile() {
+    let stockpileDiv = document.getElementById('stockpile');
+    
+    for(let item of Player.items) {
+        let itemType = findItem(item.name);
+        
+        //If the wrapper div doesn't exist, make one (eg, basic items div)
+        //this is used for client side organization
+        if(!document.getElementById(itemType.itemType + 'WrapperDiv')) {
+            console.log(itemType)
+            let wrapper = document.createElement('div');
+            wrapper.id = itemType.itemType + 'WrapperDiv';
+            wrapper.classList.add('column');
+
+            let element = document.createElement('p');
+            element.innerHTML = itemType.itemType + ' Items';
+            element.id = itemType.itemType + 'ItemsHeader';
+
+            wrapper.appendChild(element);
+            stockpileDiv.appendChild(wrapper);
+        }
+        //If the item div doesn't exists, create one
+        if(!document.getElementById(item.name + 'StockpileDiv')) {
+            let itemWrapper = document.getElementById(item.itemType + 'WrapperDiv');
+            let element = document.createElement('span');
+            element.innerHTML = item.name + '/' + item.amount;
+            element.id = item.name + 'StockpileDiv';
+            itemWrapper.appendChild(element);
+        } else {
+            //update if it does exist
+            document.getElementById(item.name + 'StockpileDiv').innerHTML = item.name + '/' + item.amount;
+        }
+    }
 }
 
 function checkNextSkills() {
@@ -227,25 +299,25 @@ function checkNextSkills() {
 //have a skeleton function and pass the skill into it,but thats for later
 function craftItem(item) {
     //to craft an item, it merely will check if the player has its REQUIRES 
-    let newItemInventory = [];
+    let newItemStockpile = [];
     let thisItem = findItem(item);
     for(let req of thisItem.requires) {
         let reqItem = playerFind(req.name);
         if(reqItem.amount >= req.amount) {
-            newItemInventory.push({
+            newItemStockpile.push({
                 name: req.name,
                 amount: reqItem.amount - req.amount
             });
         }
     }
 
-    if(thisItem.requires.length === newItemInventory.length) {
-        for(let newItem of newItemInventory) {
+    if(thisItem.requires.length === newItemStockpile.length) {
+        for(let newItem of newItemStockpile) {
             playerFind(newItem.name).amount = newItem.amount;
 
         }
-        //if the item doesn't exist in the players inventory, add it
-        //I think I want to avoid the inventory, and instead have 
+        //if the item doesn't exist in the players Stockpile, add it
+        //I think I want to avoid the Stockpile, and instead have 
         //the items count how many the player has, but seperation layers might help
         // worthwhile to look into
         if(!playerFind(thisItem.name)) {
@@ -280,10 +352,10 @@ function checkFocuses() {
 
 //update function, gets called on every tick, and calls update functions for each element
 function update() {
-
     
-    updateInventory();
+    updateStockpile();
     checkFocuses();
+    console.log(Player)
     
 
     //if there are skills in the focus list, click them
