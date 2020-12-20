@@ -76,7 +76,7 @@ export function createCraftScreen(args) {
         let interactiveHeader = document.createElement('h3');
         interactiveHeader.id = 'interactiveHeader';
         interactiveHeader.innerHTML = 'Crafting Screen'
-        interactiveSkillDiv.appendChild(interactiveHeader);
+        document.getElementById('right').appendChild(interactiveHeader);
     }
     interactiveSkillDiv.appendChild(wrapper);
     //find craftable items

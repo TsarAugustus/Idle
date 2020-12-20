@@ -36,11 +36,7 @@ let skills = [
         level: 0,
         skillRequirements: [{
             name: 'Foraging',
-            level: 1
-        }],
-        itemRequirements: [{
-            name: 'Wood',
-            amount: 10
+            level: 2
         }],
         active: false,
         currentXP: 0,
@@ -117,25 +113,17 @@ function updateSkills() {
     let activeSkills = skills.filter(skill => skill.active === true);
     for(let skill of activeSkills) {
         if(!document.getElementById(skill.name)) {
-
             let wrapper = document.createElement('div');
-            let elementText = skill.name.replace(/\s/g, ' ') + '</br>Level ' + skill.level + '</br>' + skill.currentXP + '/' + skill.XPToLevel;
-            let newElement;
-
+            let elementText = skill.name.replace(/\s/g, ' ') + '</br>Level ' + skill.level + '</br>' + skill.currentXP + '/' + skill.XPToLevel;;
+            let element = document.createElement('button');
+            element.id = skill.name;
             if(skill.uniqueSkill) {
-                let element = document.createElement('span');
-                element.id = skill.name;
-                element.classList.add('skill');
                 element.classList.add('uniqueSkill');
                 elementText = 'Open ' + elementText;
                 element.onclick = function() {
                     skill.uniqueSkillFunction();
                 }
-                newElement = element;
             } else {
-                let element = document.createElement('button');
-                element.id = skill.name;
-                element.classList.add('skill');
                 element.onclick = function() {
                     let level;
                     skill.currentXP += (skill.XPPerSuccess + findAttributeLevel(skill.XPAttributeInc));
@@ -151,43 +139,22 @@ function updateSkills() {
                             }
                         }
                     }
-                    
                     if(skill.specialSuccessFunction) {
                         skill.specialSuccessFunction();
                     }
-                    element.innerHTML = skill.name.replace(/\s/g, ' ') + '</br>Level ' + skill.level + '</br>' + skill.currentXP + '/' + skill.XPToLevel;
                 }
-                newElement = element;
             }
-
-            newElement.innerHTML = elementText;
+            element.innerHTML = elementText;
+            element.classList.add('skill');
             wrapper.id = skill.name + 'Div';
-            wrapper.classList.add('skillDiv')
-            wrapper.appendChild(newElement)
-
-            if(!skill.uniqueSkill) {
-                skillDiv.appendChild(wrapper);
-            } else {
-                let rightSide = document.getElementById('right');
-                if(!document.getElementById('uniqueSkillHeader')) {
-                    let header = document.createElement('h3');
-                    header.innerHTML = 'Unique Skills';
-                    header.id = 'uniqueSkillHeader';
-                    rightSide.appendChild(header);
-                }
-                if(!document.getElementById('uniqueSkills')) {
-                    let uniqueSkillDiv = document.createElement('div');
-                    uniqueSkillDiv.id = 'uniqueSkills';
-                    rightSide.appendChild(uniqueSkillDiv);
-                }
-                document.getElementById('uniqueSkills').appendChild(wrapper);
-            }
+            wrapper.classList.add('skillDiv');
+            wrapper.appendChild(element);
+            skillDiv.appendChild(wrapper);
             
         } else {
             let text = '';
             if(skill.uniqueSkill) {
-                text += 'Open '
-                document.getElementById(skill.name).classList.add('uniqueSkill')
+                text += 'Open ';
             }
             text += skill.name.replace(/\s/g, ' ') + '</br>Level ' + skill.level + '</br>' + skill.currentXP + '/' + skill.XPToLevel;
             document.getElementById(skill.name).innerHTML = text;
