@@ -58,8 +58,9 @@ function craftItem(item) {
 }
 
 export function createCraftScreen(args) {
-    if(document.getElementById('interaction')) {
-        let interaction = document.getElementById('interaction');
+    
+    if(document.getElementById('interactiveSkill')) {
+        let interaction = document.getElementById('interactiveSkill');
         while (interaction.hasChildNodes()) {
             interaction.removeChild(interaction.lastChild);
         }
@@ -68,16 +69,38 @@ export function createCraftScreen(args) {
 
     let interactiveSkillDiv = document.createElement('div');
     interactiveSkillDiv.id = 'interactiveSkill';
-    document.getElementById('right').appendChild(interactiveSkillDiv)
-
-    let wrapper = document.createElement('div');
-    wrapper.id = 'interaction';
+    document.getElementById('right').appendChild(interactiveSkillDiv);
     if(!document.getElementById('interactiveHeader')) {
         let interactiveHeader = document.createElement('h3');
         interactiveHeader.id = 'interactiveHeader';
         interactiveHeader.innerHTML = 'Crafting Screen'
-        document.getElementById('right').appendChild(interactiveHeader);
+        document.getElementById('interactiveSkill').appendChild(interactiveHeader);
     }
+
+    let closeBtn = document.createElement('button');
+    closeBtn.id = 'closeCraftingScreenButton';
+    closeBtn.innerHTML = 'Close';
+    closeBtn.onclick = function() {
+        if(document.getElementById('interactiveHeader')) {
+            let interaction = document.getElementById('interactiveHeader');
+            while (interaction.hasChildNodes()) {
+                interaction.removeChild(interaction.lastChild);
+            }
+            interaction.remove();
+        }
+        if(document.getElementById('interactiveSkill')) {
+            let interaction = document.getElementById('interactiveSkill');
+            while (interaction.hasChildNodes()) {
+                interaction.removeChild(interaction.lastChild);
+            }
+            interaction.remove();
+        }
+    }
+    
+    interactiveSkillDiv.appendChild(closeBtn);
+
+    let wrapper = document.createElement('div');
+    wrapper.id = 'interaction';
     interactiveSkillDiv.appendChild(wrapper);
     //find craftable items
     for(let craft of args ) {
