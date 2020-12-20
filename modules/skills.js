@@ -5,6 +5,7 @@ import { craftableItems } from './items/craftableItems.js';
 import { craftingMaterials } from './items/craftingMaterials.js';
 import { Player, playerFind } from './player.js';
 import { levelUpSkill } from './levelUpSkill.js';
+import { update } from '../main.js';
 
 //This will need to be broken up soon, into smaller pieces
 let skills = [
@@ -16,7 +17,7 @@ let skills = [
         active: true,
         currentXP: 0,
         XPToLevel: 100,
-        XPPerSuccess: 25,
+        XPPerSuccess: 50,
         XPAttributeInc: 'WIL',
         specialSuccessFunction: function() {
             let item = basicMaterials[Math.floor(Math.random() * basicMaterials.length)]
@@ -69,7 +70,20 @@ let skills = [
         XPToLevel: 100,
         XPPerSuccess: 50,
         XPAttributeInc: 'LUC'
-    }, {
+    },{
+        name: 'Flyfishing',
+        type: ['END', 'STR', 'LUC'],
+        level: 0,
+        skillRequirements:[{
+            name: 'Fishing',
+            level: 5
+        }],
+        active: false,
+        currentXP: 0,
+        XPToLevel: 100,
+        XPPerSuccess: 50,
+        XPAttributeInc: 'LUC'
+    },{
         name: 'Crafting',
         type: ['INT', 'AGI', 'LOG'],
         level: 0,
@@ -85,7 +99,6 @@ let skills = [
         uniqueSkill: true,
         uniqueSkillFunction: function() {
             createCraftScreen([craftableItems, craftingMaterials]);
-            // createCraftScreen(craftingMaterials);
         }
     },
     {
@@ -124,31 +137,37 @@ function updateSkills() {
                     skill.uniqueSkillFunction();
                 }
             } else {
-                element.onclick = function() {
-                    let level;
+                element.onclick = function() {                    
                     skill.currentXP += (skill.XPPerSuccess + findAttributeLevel(skill.XPAttributeInc));
                     //If the current skill xp is higher than it takes to level, it goes through a while loop
                     //it immediately levels the skill, then will check if additional levels are needed 
                     //(eg, if the XPSuccess is higher than the xptolevel)
-                    if(skill.currentXP > skill.XPToLevel) {
+                    if(skill.currentXP >= skill.XPToLevel) {
                         let level = true;
                         while(level) {
                             levelUpSkill(skill)
-                            if(skill.currentXP < skill.XPToLevel) {
+                            if(skill.currentXP <= skill.XPToLevel) {
                                 level = false;
                             }
                         }
                     }
+
                     if(skill.specialSuccessFunction) {
                         skill.specialSuccessFunction();
                     }
+
+                    update();
                 }
             }
+            let progressBar = document.createElement('div');
+            progressBar.id = skill.name + 'ProgressBar';
+            progressBar.classList.add('progressBar');
             element.innerHTML = elementText;
             element.classList.add('skill');
             wrapper.id = skill.name + 'Div';
             wrapper.classList.add('skillDiv');
             wrapper.appendChild(element);
+            wrapper.appendChild(progressBar);
             skillDiv.appendChild(wrapper);
             
         } else {
@@ -160,6 +179,9 @@ function updateSkills() {
             document.getElementById(skill.name).innerHTML = text;
             
         }
+        let progressWidth = (skill.currentXP / skill.XPToLevel) * 100;
+        let progressBar = document.getElementById(skill.name + 'ProgressBar');
+        progressBar.style.width = progressWidth + "%";
     }
 };
 

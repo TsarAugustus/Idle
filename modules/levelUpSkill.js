@@ -5,6 +5,7 @@ import { focusList, focusAmount } from '../main.js'
 export function levelUpSkill(skill) {
     //level up the skill, and apply a new XPToLevel
     skill.level++;
+    skill.currentXP = 0;
     skill.XPToLevel = Math.round(skill.XPToLevel * 1.6);
 
     //this is the element for the focus buttons

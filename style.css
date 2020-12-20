@@ -207,10 +207,21 @@ body {
     width: 100%;
     color: #ececec; 
 }
-.skill:active {
+.skill:hover {
     background-color: #1f2e3c;
     border: 1px solid #30475e;
+    border-radius: 0.2em;   
+}
+.skill:active {
+    background-color: #30475e;
+    border: 1px solid #1f2e3c;
     border-radius: 0.2em;
+}
+
+.progressBar {
+    background-color: green;
+    width: 0%;
+    height: 0.5em;
 }
 
 #interactiveSkill {

@@ -117,7 +117,7 @@ function init() {
 }
 
 window.onload = (e) => {init()}
-export { focusList, focusAmount}
+export { focusList, focusAmount, update}
 //Random stuff that popped into my head that I may want to look at later
 
 //hypothermia

@@ -1,0 +1,21 @@
+{
+  "name": "idle",
+  "version": "0.0.1",
+  "description": "An idle game.",
+  "main": "main.js",
+  "scripts": {
+    "test": "mocha mocha/bin/test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TsarAugustus/Idle.git"
+  },
+  "bugs": {
+    "url": "https://github.com/TsarAugustus/Idle/issues"
+  },
+  "homepage": "https://github.com/TsarAugustus/Idle#readme",
+  "dependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^8.2.1"
+  }
+}
