@@ -34,9 +34,13 @@ let skills = [
         name: 'Farming',
         type: ['WIL', 'STR', 'AGI'],
         level: 0,
-        requirements: [{
+        skillRequirements: [{
             name: 'Foraging',
-            level: 5
+            level: 1
+        }],
+        itemRequirements: [{
+            name: 'Wood',
+            amount: 10
         }],
         active: false,
         currentXP: 0,
@@ -47,7 +51,7 @@ let skills = [
         name: 'Animal Husbandry',
         type: ['END', 'STR', 'AGI'],
         level: 0,
-        requirements: [{
+        skillRequirements: [{
             name: 'Farming',
             level: 7
         }],
@@ -60,7 +64,7 @@ let skills = [
         name: 'Fishing',
         type: ['END', 'STR', 'LUC'],
         level: 0,
-        requirements:[{
+        skillRequirements:[{
             name: 'Farming',
             level: 5
         }],
@@ -74,7 +78,7 @@ let skills = [
         type: ['INT', 'AGI', 'LOG'],
         level: 0,
         active: false,
-        requirements: [{
+        skillRequirements: [{
             name: 'Foraging',
             level: 2
         }],
@@ -93,7 +97,7 @@ let skills = [
         type: ['INT', 'AGI', 'LOG'],
         level: 0,
         active: false,
-        requirements: [{
+        skillRequirements: [{
             name: 'Foraging',
             level: 5
         }, {
@@ -199,48 +203,44 @@ function checkNextSkills() {
     let checkAvailableSkills = skills.filter(skill => skill.active === true);
     //iterates through every skill that is unavailable
     for(let skill of checkUnavailableSkills) {
-        //if the skill has more than 1 requirement, common for later skills
-        if(skill.requirements.length > 1) {
-            //this container will hold TRUE items
-            //this container length will be checked against the skill requirements
-            let skillArr = [];
+        //this container will hold TRUE items
+        //this container length will be checked against the skill skillRequirements
+        let arrayToMatch = [];
 
-            //first, iterate through the requirements of the skill
-            for(let reqSkill of skill.requirements) {
+        //this is the number the arrayToMatch has to match against
+        //it is the sum of itemrequirements and skillrequirements
+        let numToMatch = 0;
+        if(skill.itemRequirements) {
+            numToMatch += skill.itemRequirements.length;
+            for(let reqItem of skill.itemRequirements) {
+                for(let item of Player.items) {
+                    if(item.name === reqItem.name && item.amount >= reqItem.amount) {
+                        arrayToMatch.push(true);
+                    }
+                }
+            }
+        }
+
+        if(skill.skillRequirements) {
+            numToMatch += skill.skillRequirements.length;
+            //first, iterate through the skillRequirements of the skill
+            for(let reqSkill of skill.skillRequirements) {
                 //then iterate through the available skills (that is, skills that are set to ACTIVE)
                 for(let availSkill of checkAvailableSkills) {
                     //if the required skill matches in name and level, then push TRUE into skillArr array
                     if(reqSkill.name === availSkill.name && availSkill.level >= reqSkill.level) {
-                        skillArr.push(true)
+                        arrayToMatch.push(true)
                     }                    
                 }
             }
-            //this checks the skillArr container, to see if all the skills are available
-            if(skillArr.length === skill.requirements.length) {
-                skill.active = true;
-                skill.level = 1;
-            }
-        } 
-        //if the skill only has 1 requirement.
-        //single requirements are still in an array, just in case I need to change skills later
-        else {
-            for(let reqSkill of checkAvailableSkills) {
-                if(reqSkill.name === skill.requirements[0].name && reqSkill.level >= skill.requirements[0].level) {
-                    skill.active = true;
-                    skill.level = 1;
-                }
-            }            
         }
+        //this checks the skillArr container, to see if all the skills are available
+        if(arrayToMatch.length === numToMatch) {
+            skill.active = true;
+            skill.level = 1;
+        }
+      
     }
 }
 
 export { skills, updateSkills, checkNextSkills }
-
-//name = obviously the name of the skill
-//type = what attribute it fits under, eg Mechanics is intelligence
-//level = what level the skill is at
-//requirements = if the skill requires previous skills
-    // if so, then each requirement has a {name: X}, where is is skill name
-    //and {level: Y} where Y is the level the skill requires to be upgraded
-    //{name: X, level: Y}
-//active = whether or not the skill is active. default is false, with level being 0 too

@@ -5,6 +5,7 @@ body {
     /* overflow-y: hidden; */
     /* overflow-x: hidden; */
     background-color: #222831;
+    font-family: sans-serif;
 }
 
 #left {
@@ -26,11 +27,14 @@ body {
 }
 
 #interaction {
-    padding: 2em;
+    padding-left: 1em;
+    padding-right: 1em;
     border: 1px solid #273a4d;
-    border-radius: 2em;
-    max-height: 30vh;
+    border-radius: 1em;
+    max-height: 35vh;
     overflow-y: scroll;
+    box-shadow: 0px 0px 0.1em black;
+    text-align: center;
 }
 
 #interaction::-webkit-scrollbar {

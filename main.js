@@ -54,7 +54,7 @@ function updateStockpile() {
             let elementText;
             if(item.special) {
                 elementText = item.name + ': ' + item.amount;
-                if(item.special.current && item.special.max) {
+                if(item.special.max) {
                     elementText += '</br>' + item.special.current.toFixed(1) + '/' + item.special.max;       
                 }           
             } else {
