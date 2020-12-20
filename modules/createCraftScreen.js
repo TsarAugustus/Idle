@@ -66,10 +66,18 @@ export function createCraftScreen(args) {
         interaction.remove();
     }
 
-    let interactiveSkillDiv = document.getElementById('interactiveSkill');
+    let interactiveSkillDiv = document.createElement('div');
+    interactiveSkillDiv.id = 'interactiveSkill';
+    document.getElementById('right').appendChild(interactiveSkillDiv)
+
     let wrapper = document.createElement('div');
     wrapper.id = 'interaction';
-    wrapper.innerHTML = '<h3>Crafting Screen</h3>'
+    if(!document.getElementById('interactiveHeader')) {
+        let interactiveHeader = document.createElement('h3');
+        interactiveHeader.id = 'interactiveHeader';
+        interactiveHeader.innerHTML = 'Crafting Screen'
+        interactiveSkillDiv.appendChild(interactiveHeader);
+    }
     interactiveSkillDiv.appendChild(wrapper);
     //find craftable items
     for(let craft of args ) {
@@ -82,7 +90,7 @@ export function createCraftScreen(args) {
                 document.getElementById('interaction').appendChild(craftDivWrapper);
             }
             if(!document.getElementById(item.itemType + 'Header')) {
-                let craftItemHeader = document.createElement('h2');
+                let craftItemHeader = document.createElement('h4');
                 craftItemHeader.id = item.itemType + 'Header';
                 craftItemHeader.innerHTML = item.itemType + ' related';
                 document.getElementById(item.itemType + 'CraftDivWrapper').appendChild(craftItemHeader);
@@ -97,7 +105,7 @@ export function createCraftScreen(args) {
                 element.name = item.name.replace(/\s/g, '-');
                 let elementText = item.name;
                 for(let reqItem of item.requires) {
-                    elementText += '</br>' + reqItem.name + '/' + reqItem.amount;
+                    elementText += '</br>' + reqItem.name + ': ' + reqItem.amount;
                 }
                 element.innerHTML = elementText;
                 element.onclick = function() {

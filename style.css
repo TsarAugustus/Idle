@@ -4,12 +4,14 @@ body {
     max-height: 100vh;
     /* overflow-y: hidden; */
     /* overflow-x: hidden; */
+    background-color: #222831;
 }
 
 #left {
     /* border: 1px solid blue; */
     display: flex;
     flex: 1 0 40%;
+    max-height: 100vh;
     flex-direction: row;
     /* flex-wrap: wrap; */
 }
@@ -25,37 +27,42 @@ body {
 
 #interaction {
     padding: 2em;
-    border: 1px solid gray;
+    border: 1px solid #273a4d;
     border-radius: 2em;
     max-height: 30vh;
     overflow-y: scroll;
 }
 
+#interaction::-webkit-scrollbar {
+    width: 0.5em;   
+}
+
 #stockpile {
     display: flex;
-    /* border: 1px solid black; */
     text-align: center;
     justify-content: flex-start;
     flex-direction: column;
     width: 30%;
     /* flex-grow: 1; */
-    max-height: 40vh;
-    overflow-y: scroll;
+    max-height: 50vh;
+    /* overflow-y: scroll; */
 }
 
 #stockpile h3 {
-    border-bottom: 1px solid black
+    border-bottom: 1px solid #273a4d;
 }
 
 #stockpile p {
     padding: 0;
-    margin-bottom: 1em;
-    border-bottom: 1px solid black;
+    margin: 0;
+    border-bottom: 1px solid #273a4d;
 }
 
 .column {
     display: flex;
     flex-direction: column;
+    padding: 0;
+    margin: 0;
 }
 
 #attributes {
@@ -75,7 +82,7 @@ body {
 }
 
 #Primary h3 {
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid #273a4d;
 }
 
 #Secondary {
@@ -86,15 +93,16 @@ body {
 }
 
 #Secondary h3 {
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid #273a4d;
 }
 
 #right {
     display: flex;
-    flex: 1 0 60%;
+    flex: 1 0 59%;
     flex-direction: column;
     /* border: 1px solid red; */
     overflow-x: hidden;
+    border-right: 1px solid #273a4d;
 }
 
 #skills {
@@ -119,6 +127,7 @@ body {
     padding: 0.5em;
     border: 1px solid black;
     border-radius: 0.2em;
+    /* background-color: #03dac6 !important; */
 }
 
 .skillDiv {
@@ -130,21 +139,23 @@ body {
 
 #skillHeader {
     text-align: center;
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid #273a4d;
 }
 
 #uniqueSkillHeader {
     text-align: center;
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid #273a4d;
 }
 
 
 .focus {
-    border-color: red;
+    border-color: #f2a365;
 }
 
 .focusElement {
     width: 100%;
+    background-color: #222831;
+    color: #f2a365
 }
 
 .focusElement:disabled {
@@ -153,17 +164,35 @@ body {
 
 .unFocusElement {
     width: 100%;
+    background-color: #f2a365;
+    color: #222831;
 }
 
 
 .skill {
     outline: none;
     display: flex;
+    background-color: #30475e;
     flex-grow: 2;
+    color: #ececec; 
 }
 
 #interactiveSkill {
-    /* border: 1px solid black; */
     display: flex;
-    /* height: 50%; */
+    flex-direction: column;
+    align-self: center;
+    align-items: center;
+}
+
+#interaction button {
+    background-color: #30475e;
+    color: #ececec;
+}
+
+span {
+    color: #dbdbdb;
+}
+
+h3, h4, p {
+    color: #f2a365;
 }

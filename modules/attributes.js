@@ -155,14 +155,14 @@ function updateAttributes(skill) {
     //the SKILL arguement is passed on levelup, otherwise it initializes the attributes from init. 
     if(skill) {
         for(let type of skill.type) {
-            document.getElementById(type).innerHTML = findAttributeLongName(type) + '/' + findAttributeLevel(type);
+            document.getElementById(type).innerHTML = findAttributeLongName(type) + ': ' + findAttributeLevel(type);
         }
         //This should be handled better, but as it stands, I don't have a way of knowing which secondary attributes need to be updated
         //TODO: fix this to be better
         let secondaryAttributes = attributes.filter(attribute => attribute.type === 'Secondary');
         for(let secondaryAttribute of secondaryAttributes) {
             secondaryAttribute.level = secondaryAttribute.calculate();
-            document.getElementById(secondaryAttribute.name).innerHTML = secondaryAttribute.longName + '/' + secondaryAttribute.level;
+            document.getElementById(secondaryAttribute.name).innerHTML = secondaryAttribute.longName + ': ' + secondaryAttribute.level;
         }
     } else {
         //this is the initialization of attributes
@@ -188,12 +188,12 @@ function updateAttributes(skill) {
         for(let attribute of attributes) {
             let element = document.createElement('span');
             if(attribute.type === 'Primary') {
-                element.innerHTML = attribute.longName + '/' + attribute.level;
+                element.innerHTML = attribute.longName + ': ' + attribute.level;
                 element.id = attribute.name;
                 primaryDiv.appendChild(element);
             } else if(attribute.type === 'Secondary') {
                 attribute.level = attribute.calculate();
-                element.innerHTML = attribute.longName + '/' + attribute.level;
+                element.innerHTML = attribute.longName + ': ' + attribute.level;
                 element.id = attribute.name;
                 secondaryDiv.appendChild(element);
             }
