@@ -63,6 +63,7 @@ body {
     flex-direction: column;
     padding: 0;
     margin: 0;
+    margin-bottom: 1em;
 }
 
 #attributes {
@@ -196,3 +197,44 @@ span {
 h3, h4, p {
     color: #f2a365;
 }
+
+
+
+/* ============================ */
+
+.Leaves {
+    color: #83a95c;
+}
+
+.Silk {
+    color: #e6e6e6;
+}
+
+.Thread {
+    color: #e8e8e8;
+}
+
+.Wood {
+    color: #c5a880;
+}
+
+.Pole {
+    color: #cdb492;
+}
+
+.Clay {
+    color: #663922;
+}
+
+.Stone {
+    color: #898b8a;
+}
+
+.Fireplace {
+    color: #db6400;
+}
+
+.RainwaterBarrell {
+    color: #0e49b5;
+}
+

@@ -34,6 +34,7 @@ function updateStockpile() {
             //writes stockpile to div
             let itemWrapper = document.getElementById(itemType.itemType + 'WrapperDiv');
             let element = document.createElement('span');
+            element.classList.add(item.name.replace(/\s/g, ''));
             element.id = item.name + 'StockpileDiv';
             let elementText;
             if(item.special) {
@@ -45,7 +46,8 @@ function updateStockpile() {
             } else {
                 elementText = item.name + ': ' + item.amount.toFixed(2);
             }
-            itemWrapper.appendChild(element);        
+
+            itemWrapper.appendChild(element);
             
         } else {
             let itemStockPileDiv = document.getElementById(item.name + 'StockpileDiv');
