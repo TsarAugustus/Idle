@@ -120,71 +120,6 @@ let skills = [
     }
 ];
 
-function updateSkills() {
-    let skillDiv = document.getElementById('skills');
-
-    let activeSkills = skills.filter(skill => skill.active === true);
-    for(let skill of activeSkills) {
-        if(!document.getElementById(skill.name)) {
-            let wrapper = document.createElement('div');
-            let elementText = skill.name.replace(/\s/g, ' ') + '</br>Level ' + skill.level + '</br>' + skill.currentXP + '/' + skill.XPToLevel;;
-            let element = document.createElement('button');
-            element.id = skill.name;
-            if(skill.uniqueSkill) {
-                element.classList.add('uniqueSkill');
-                elementText = 'Open ' + elementText;
-                element.onclick = function() {
-                    skill.uniqueSkillFunction();
-                }
-            } else {
-                element.onclick = function() {                    
-                    skill.currentXP += (skill.XPPerSuccess + findAttributeLevel(skill.XPAttributeInc));
-                    //If the current skill xp is higher than it takes to level, it goes through a while loop
-                    //it immediately levels the skill, then will check if additional levels are needed 
-                    //(eg, if the XPSuccess is higher than the xptolevel)
-                    if(skill.currentXP >= skill.XPToLevel) {
-                        let level = true;
-                        while(level) {
-                            levelUpSkill(skill)
-                            if(skill.currentXP <= skill.XPToLevel) {
-                                level = false;
-                            }
-                        }
-                    }
-
-                    if(skill.specialSuccessFunction) {
-                        skill.specialSuccessFunction();
-                    }
-
-                    update();
-                }
-            }
-            let progressBar = document.createElement('div');
-            progressBar.id = skill.name + 'ProgressBar';
-            progressBar.classList.add('progressBar');
-            element.innerHTML = elementText;
-            element.classList.add('skill');
-            wrapper.id = skill.name + 'Div';
-            wrapper.classList.add('skillDiv');
-            wrapper.appendChild(element);
-            wrapper.appendChild(progressBar);
-            skillDiv.appendChild(wrapper);
-            
-        } else {
-            let text = '';
-            if(skill.uniqueSkill) {
-                text += 'Open ';
-            }
-            text += skill.name.replace(/\s/g, ' ') + '</br>Level ' + skill.level + '</br>' + skill.currentXP + '/' + skill.XPToLevel;
-            document.getElementById(skill.name).innerHTML = text;
-            
-        }
-        let progressWidth = (skill.currentXP / skill.XPToLevel) * 100;
-        let progressBar = document.getElementById(skill.name + 'ProgressBar');
-        progressBar.style.width = progressWidth + "%";
-    }
-};
-
 function checkNextSkills() {
     //might be useful to have an array of active skills to match against, and update that container
     //instead of constantly calling filter when this is checked
@@ -232,4 +167,115 @@ function checkNextSkills() {
     }
 }
 
-export { skills, updateSkills, checkNextSkills }
+
+function incrementSkill(skillInformation) {
+    let level  = false;
+    skillInformation.currentXP += (skillInformation.XPPerSuccess + findAttributeLevel(skillInformation.XPAttributeInc));
+
+    if(skillInformation.currentXP >= skillInformation.XPToLevel) { 
+        level = true;
+    }
+    while(level) {
+        levelUpSkill(skillInformation)
+        if(skillInformation.currentXP <= skillInformation.XPToLevel) {
+            level = false;
+        }
+    }
+
+    if(skillInformation.specialSuccessFunction) {
+        skillInformation.specialSuccessFunction();
+    }
+
+    // update();
+}
+
+function updateProgressBar(skillInformation) {
+    let progressWidth = (skillInformation.currentXP / skillInformation.XPToLevel) * 100;
+    let progressBar = document.getElementById(skillInformation.name + 'ProgressBar');
+    progressBar.style.width = progressWidth + "%";
+}
+
+function makeUniqueElementText(skillInformation) {
+    return 'Open ' + skillInformation.name.replace(/\s/g, ' ') + '</br>Level ' + skillInformation.level + '</br>' + skillInformation.currentXP + '/' + skillInformation.XPToLevel;
+}
+
+function makeRegularElementText(skillInformation) {
+    return skillInformation.name.replace(/\s/g, ' ') + '</br>Level ' + skillInformation.level + '</br>' + skillInformation.currentXP + '/' + skillInformation.XPToLevel;
+}
+
+function makeSkillDiv(skillsToMake) {
+    let thisSkill = skillsToMake[0];
+    if(!document.getElementById(thisSkill.name + 'Wrapper')) {
+        let wrapper = document.createElement('div');
+        wrapper.id = thisSkill.name + 'Wrapper';
+        wrapper.classList.add('skill');
+
+        let element = document.createElement('span');
+        let elementText = '';
+        element.id = thisSkill.name;
+        if(thisSkill.uniqueSkill) {
+            elementText = makeUniqueElementText(thisSkill);
+            element.onclick = function() {
+                thisSkill.uniqueSkillFunction();
+                element.innerHTML = makeUniqueElementText(thisSkill);
+            }
+        } else {
+            elementText = makeRegularElementText(thisSkill);
+            element.onclick = function() {
+                incrementSkill(thisSkill);
+                element.innerHTML = makeRegularElementText(thisSkill);
+                updateProgressBar(thisSkill);
+            }
+        }
+        element.innerHTML = elementText;
+        document.getElementById('skills').appendChild(wrapper);
+        document.getElementById(thisSkill.name + 'Wrapper').appendChild(element);
+
+        let progressBar = document.createElement('div');
+        progressBar.id = thisSkill.name + 'ProgressBar';
+        progressBar.classList.add('progressBar');
+        wrapper.appendChild(progressBar);
+    }
+
+    skillsToMake.shift();
+    if(skillsToMake.length != 0) {
+        makeSkillDiv(skillsToMake)
+    }
+
+}
+
+function makeAttributeDiv(primaryAttributes) {
+    if(!document.getElementById('attributeSkillDivWapper')) {
+        const skillDiv = document.getElementById('skills');
+        let wrapper = document.createElement('div');
+        wrapper.id = 'attributeSkillDivWapper';
+        skillDiv.appendChild(wrapper);
+    }
+    const skillAttributeWrapper = document.getElementById('attributeSkillDivWapper');
+    const thisAttribute = primaryAttributes[0];
+    let element = document.createElement('button');
+    element.id = thisAttribute.name + 'AttributeWrapper';
+    element.classList.add('attributeSkillDiv');
+    element.innerHTML = thisAttribute.name;
+    element.onclick = function() {
+        let previousSkillWrappers = document.getElementsByClassName('skill');
+        while(previousSkillWrappers[0]) {
+            previousSkillWrappers[0].parentNode.removeChild(previousSkillWrappers[0])
+        }
+        let skillFilter = skills.filter(skill => skill.type[0] === thisAttribute.name);
+        makeSkillDiv(skillFilter);
+    }
+    skillAttributeWrapper.appendChild(element);
+    primaryAttributes.shift();
+
+    if(primaryAttributes.length > 0) {
+        makeAttributeDiv(primaryAttributes)
+    }
+}
+
+function updateSkills() {
+    const primaryAttributes = attributes.filter(attribute => attribute.type === 'Primary');
+    makeAttributeDiv(primaryAttributes)
+}
+
+export { skills, updateSkills, checkNextSkills, makeUniqueElementText }

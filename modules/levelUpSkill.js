@@ -40,17 +40,17 @@ export function levelUpSkill(skill) {
                             //remove this item from the focuslist
                             focusList.splice(focusedSkill, 1);
                             //this is used to remove the unfocus button from the screen
-                            document.getElementById(skill.name + 'Div').appendChild(focusElement);
+                            document.getElementById(skill.name + 'Wrapper').appendChild(focusElement);
                             this.parentNode.removeChild(this);
                         }
                     }
                 }
                 //apply the unfocus element to the screen
-                document.getElementById(skill.name + 'Div').appendChild(unFocusElement);
+                document.getElementById(skill.name + 'Wrapper').appendChild(unFocusElement);
             }
         }
         //add the focus element to the screen
-        document.getElementById(skill.name + 'Div').appendChild(focusElement);
+        document.getElementById(skill.name + 'Wrapper').appendChild(focusElement);
 
     }
 

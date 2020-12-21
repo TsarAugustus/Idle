@@ -1,6 +1,6 @@
 import { findItem } from './items.js';
 import { Player, playerFind } from './player.js';
-import { skills } from './skills.js';
+import { skills, makeUniqueElementText } from './skills.js';
 import { levelUpSkill } from './levelUpSkill.js';
 
 //the craft item function will most likely be moved to a different module
@@ -139,6 +139,10 @@ export function createCraftScreen(args) {
                         if(crafting.currentXP >= crafting.XPToLevel) {
                             levelUpSkill(crafting);
                         }
+                        document.getElementById('Crafting').innerHTML = makeUniqueElementText(crafting)
+                        let progressWidth = (crafting.currentXP / crafting.XPToLevel) * 100;
+                        let progressBar = document.getElementById(crafting.name + 'ProgressBar');
+                        progressBar.style.width = progressWidth + "%";
     
                     }
                 }

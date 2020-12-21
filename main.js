@@ -1,4 +1,4 @@
-import { skills, updateSkills, checkNextSkills } from './modules/skills.js';
+import { skills, checkNextSkills, updateSkills } from './modules/skills.js';
 import { attributes, findAttributeLevel, findAttributeLongName, updateAttributes} from './modules/attributes.js';
 import { items, findItem } from './modules/items.js';
 import { Player, playerFind, updateTickItems } from './modules/player.js';
@@ -86,7 +86,7 @@ function checkFocuses() {
 function update() {
     
     //update screen stuff
-    updateSkills();
+    // updateSkills();
     updateTickItems();
     updateStockpile();
     checkFocuses();
