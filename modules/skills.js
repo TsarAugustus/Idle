@@ -164,7 +164,9 @@ function checkNextSkills() {
         if(arrayToMatch.length === numToMatch) {
             skill.active = true;
             skill.level = 1;
-            makeSkillDiv(checkAvailableSkills);
+            if(skill.type[0] === activeAttributeWrapper) {
+                makeSkillDiv([skill])
+            }
         }
     }
 
