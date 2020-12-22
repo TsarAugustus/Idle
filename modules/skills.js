@@ -5,7 +5,7 @@ import { craftableItems } from './items/craftableItems.js';
 import { craftingMaterials } from './items/craftingMaterials.js';
 import { Player, playerFind } from './player.js';
 import { levelUpSkill } from './levelUpSkill.js';
-import { update } from '../main.js';
+import { focusList, focusAmount } from '../main.js'
 
 //This will need to be broken up soon, into smaller pieces
 let skills = [
@@ -120,6 +120,8 @@ let skills = [
     }
 ];
 
+let activeAttributeWrapper;
+
 function checkNextSkills() {
     //might be useful to have an array of active skills to match against, and update that container
     //instead of constantly calling filter when this is checked
@@ -162,9 +164,10 @@ function checkNextSkills() {
         if(arrayToMatch.length === numToMatch) {
             skill.active = true;
             skill.level = 1;
+            makeSkillDiv(checkAvailableSkills);
         }
-      
     }
+
 }
 
 
@@ -186,7 +189,13 @@ function incrementSkill(skillInformation) {
         skillInformation.specialSuccessFunction();
     }
 
-    // update();
+    if(skillInformation.uniqueSkill && document.getElementById(skillInformation.name)) {
+        document.getElementById(skillInformation.name).innerHTML = makeUniqueElementText(skillInformation);
+        updateProgressBar(skillInformation);
+    } else if(document.getElementById(skillInformation.name)) {
+        document.getElementById(skillInformation.name).innerHTML = makeRegularElementText(skillInformation);
+        updateProgressBar(skillInformation);
+    }
 }
 
 function updateProgressBar(skillInformation) {
@@ -203,9 +212,65 @@ function makeRegularElementText(skillInformation) {
     return skillInformation.name.replace(/\s/g, ' ') + '</br>Level ' + skillInformation.level + '</br>' + skillInformation.currentXP + '/' + skillInformation.XPToLevel;
 }
 
+function makeUnfocusButton(thisSkill) {
+    let thisFocusButton = document.getElementById(thisSkill.name + 'Focus');
+    let thisElement = document.getElementById(thisSkill.name);
+    if(thisFocusButton)
+        thisElement.parentNode.removeChild(thisFocusButton);
+    //the unfocus button
+    let unFocusElement = document.createElement('button');
+    unFocusElement.id = thisSkill.name + 'UnFocus';
+    unFocusElement.classList.add('UnfocusElement');
+    unFocusElement.innerHTML = 'Unfocus';
+    unFocusElement.onclick = function() {
+        for(let focusedSkill in focusList) {
+            if(focusList[focusedSkill].name === thisSkill.name) {
+                //remove the focus class
+                document.getElementById(thisSkill.name).classList.remove('focus');
+                //remove this item from the focuslist
+                focusList.splice(focusedSkill, 1);
+                this.parentNode.removeChild(this);
+            }
+        }
+        makeFocusButton(thisSkill);
+    }
+    //apply the unfocus element to the screen
+    if(document.getElementById(thisSkill.name + 'Wrapper')) {
+        document.getElementById(thisSkill.name + 'Wrapper').appendChild(unFocusElement);
+    }
+}
+
+function makeFocusButton(thisSkill) {
+    focusList.forEach(focusItem => {
+        if(thisSkill && thisSkill.name === focusItem.name && !document.getElementById(thisSkill.name + 'UnFocus')) {
+            makeUnfocusButton(thisSkill);
+        }
+    })
+
+
+    if(thisSkill && thisSkill.level >= 2 && document.getElementById(thisSkill.name) && !thisSkill.uniqueSkill && !document.getElementById(thisSkill.name + 'UnFocus') && !document.getElementById(thisSkill.name + 'Focus')) {
+        let focusElement = document.createElement('button');
+        focusElement.id = thisSkill.name + 'Focus';
+        focusElement.classList.add('focusElement');
+        focusElement.innerHTML = 'Focus';
+
+        focusElement.onclick = function() {
+            let focusListSkill = focusList.find(skillItem => skillItem.name === thisSkill.name);
+            if(!focusListSkill && focusList.length < focusAmount) {
+                focusList.push(thisSkill);
+                document.getElementById(thisSkill.name + 'Wrapper').classList.add('focus');
+                makeUnfocusButton(thisSkill);
+            }
+        }
+        //add the focus element to the screen
+        document.getElementById(thisSkill.name + 'Wrapper').appendChild(focusElement);
+
+    }
+}
+
 function makeSkillDiv(skillsToMake) {
     let thisSkill = skillsToMake[0];
-    if(!document.getElementById(thisSkill.name + 'Wrapper')) {
+    if(thisSkill && thisSkill.type[0] === activeAttributeWrapper && thisSkill && !document.getElementById(thisSkill.name + 'Wrapper')) {
         let wrapper = document.createElement('div');
         wrapper.id = thisSkill.name + 'Wrapper';
         wrapper.classList.add('skill');
@@ -224,7 +289,9 @@ function makeSkillDiv(skillsToMake) {
             element.onclick = function() {
                 incrementSkill(thisSkill);
                 element.innerHTML = makeRegularElementText(thisSkill);
-                updateProgressBar(thisSkill);
+                if(thisSkill.level >= 2) {
+                    makeFocusButton(thisSkill);
+                }
             }
         }
         element.innerHTML = elementText;
@@ -236,12 +303,12 @@ function makeSkillDiv(skillsToMake) {
         progressBar.classList.add('progressBar');
         wrapper.appendChild(progressBar);
     }
+    makeFocusButton(thisSkill);
 
     skillsToMake.shift();
     if(skillsToMake.length != 0) {
         makeSkillDiv(skillsToMake)
     }
-
 }
 
 function makeAttributeDiv(primaryAttributes) {
@@ -258,11 +325,12 @@ function makeAttributeDiv(primaryAttributes) {
     element.classList.add('attributeSkillDiv');
     element.innerHTML = thisAttribute.name;
     element.onclick = function() {
+        activeAttributeWrapper = thisAttribute.name;
         let previousSkillWrappers = document.getElementsByClassName('skill');
         while(previousSkillWrappers[0]) {
             previousSkillWrappers[0].parentNode.removeChild(previousSkillWrappers[0])
         }
-        let skillFilter = skills.filter(skill => skill.type[0] === thisAttribute.name);
+        let skillFilter = skills.filter(skill => skill.type[0] === thisAttribute.name && skill.active);
         makeSkillDiv(skillFilter);
     }
     skillAttributeWrapper.appendChild(element);
@@ -275,7 +343,7 @@ function makeAttributeDiv(primaryAttributes) {
 
 function updateSkills() {
     const primaryAttributes = attributes.filter(attribute => attribute.type === 'Primary');
-    makeAttributeDiv(primaryAttributes)
+    makeAttributeDiv(primaryAttributes);
 }
 
-export { skills, updateSkills, checkNextSkills, makeUniqueElementText }
+export { skills, updateSkills, checkNextSkills, makeUniqueElementText, incrementSkill }

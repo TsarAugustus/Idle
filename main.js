@@ -1,4 +1,4 @@
-import { skills, checkNextSkills, updateSkills } from './modules/skills.js';
+import { skills, checkNextSkills, updateSkills, incrementSkill } from './modules/skills.js';
 import { attributes, findAttributeLevel, findAttributeLongName, updateAttributes} from './modules/attributes.js';
 import { items, findItem } from './modules/items.js';
 import { Player, playerFind, updateTickItems } from './modules/player.js';
@@ -98,7 +98,7 @@ function update() {
     //if there are skills in the focus list, click them
     if(focusList) {
         for(let skillFocus of focusList) {
-            document.getElementById(skillFocus.name).click();
+            incrementSkill(skillFocus);
         }        
     }
 }
