@@ -2,6 +2,7 @@ import { findItem } from './items.js';
 import { Player, playerFind } from './player.js';
 import { skills, makeUniqueElementText } from './skills.js';
 import { levelUpSkill } from './levelUpSkill.js';
+import { updateStockpile } from '../main.js';
 
 //the craft item function will most likely be moved to a different module
 //a lot of skills will have interactive elements like this, so it might be good to
@@ -50,6 +51,7 @@ function craftItem(item) {
             }
             
         }
+        updateStockpile();
         return true;
     } else {
         return false;

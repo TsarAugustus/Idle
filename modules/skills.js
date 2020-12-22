@@ -5,7 +5,7 @@ import { craftableItems } from './items/craftableItems.js';
 import { craftingMaterials } from './items/craftingMaterials.js';
 import { Player, playerFind } from './player.js';
 import { levelUpSkill } from './levelUpSkill.js';
-import { focusList, focusAmount } from '../main.js'
+import { focusList, focusAmount, updateStockpile } from '../main.js'
 
 //This will need to be broken up soon, into smaller pieces
 let skills = [
@@ -30,6 +30,7 @@ let skills = [
             } else {
                 playerFind(item.name).amount += Math.random() * 1;
             }
+            updateStockpile();
         }
     }, {
         name: 'Farming',
@@ -155,7 +156,7 @@ function checkNextSkills() {
                 for(let availSkill of checkAvailableSkills) {
                     //if the required skill matches in name and level, then push TRUE into skillArr array
                     if(reqSkill.name === availSkill.name && availSkill.level >= reqSkill.level) {
-                        arrayToMatch.push(true)
+                        arrayToMatch.push(true);
                     }                    
                 }
             }
@@ -165,7 +166,7 @@ function checkNextSkills() {
             skill.active = true;
             skill.level = 1;
             if(skill.type[0] === activeAttributeWrapper) {
-                makeSkillDiv([skill])
+                makeSkillDiv([skill]);
             }
         }
     }
@@ -328,9 +329,15 @@ function makeAttributeDiv(primaryAttributes) {
     element.innerHTML = thisAttribute.name;
     element.onclick = function() {
         activeAttributeWrapper = thisAttribute.name;
+        for(let el of document.getElementsByClassName('activeAttributeWrapper')) {
+            if(el.id != element.id) {
+                el.classList.remove('activeAttributeWrapper')
+            }
+        }
+        element.classList.add('activeAttributeWrapper');
         let previousSkillWrappers = document.getElementsByClassName('skill');
         while(previousSkillWrappers[0]) {
-            previousSkillWrappers[0].parentNode.removeChild(previousSkillWrappers[0])
+            previousSkillWrappers[0].parentNode.removeChild(previousSkillWrappers[0]);
         }
         let skillFilter = skills.filter(skill => skill.type[0] === thisAttribute.name && skill.active);
         makeSkillDiv(skillFilter);
