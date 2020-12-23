@@ -2,6 +2,7 @@ export let craftableItems = [{
     name: 'Rainwater Barrell',
     type: 'Solid',
     itemType: 'Civ',
+    filter: 'General',
     amount: 0,
     special: {
         max: 100,
@@ -26,6 +27,7 @@ export let craftableItems = [{
     name: 'Fireplace',
     type: 'Solid',
     itemType: 'Civ',
+    filter: 'General',
     amount: 0,
     special: {
         max: 100,

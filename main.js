@@ -8,61 +8,35 @@ let focusAmount = 1;
 let focusList = [];
 
 //Currently gets called every tick. 
-function updateStockpile() {
+function updateStockpile(passedItem) {
     let stockpileDiv = document.getElementById('stockpile');
-    
-    for(let item of Player.items) {
-        let itemType = findItem(item.name);
-        
-        //If the wrapper div doesn't exist, make one (eg, basic items div)
-        //If the item div doesn't exists, create one
-        if(!document.getElementById(item.name + 'StockpileDiv')) {
-            //this is used for client side organization
-            if(!document.getElementById(itemType.itemType + 'WrapperDiv')) {
-                let wrapper = document.createElement('div');
-                wrapper.id = itemType.itemType + 'WrapperDiv';
-                wrapper.classList.add('column');
-    
-                let element = document.createElement('p');
-                element.innerHTML = itemType.itemType + ' Items';
-                element.id = itemType.itemType + 'ItemsHeader';
-    
-                wrapper.appendChild(element);
-                stockpileDiv.appendChild(wrapper);
-            }
-
-            //writes stockpile to div
-            let itemWrapper = document.getElementById(itemType.itemType + 'WrapperDiv');
-            let element = document.createElement('span');
-            element.classList.add(item.name.replace(/\s/g, ''));
-            element.id = item.name + 'StockpileDiv';
-            let elementText;
-            if(item.special) {
-                elementText = item.name + ': ' + item.amount;
-                if(item.special.current && item.special.max) {
-                    elementText += '</br>' + item.special.current.toFixed(1) + '/' + item.special.max;       
-                }
-                
-            } else {
-                elementText = item.name + ': ' + item.amount.toFixed(2);
-            }
-
-            itemWrapper.appendChild(element);
+    let itemInsideInventory = playerFind(passedItem.name);
             
-        } else {
-            let itemStockPileDiv = document.getElementById(item.name + 'StockpileDiv');
-            let elementText;
-            if(item.special) {
-                elementText = item.name + ': ' + item.amount;
-                if(item.special.max) {
-                    elementText += '</br>' + item.special.current.toFixed(1) + '/' + item.special.max;       
-                }           
-            } else {
-                elementText = item.name + ': ' + item.amount.toFixed(2);
-            }
-            itemStockPileDiv.innerHTML = elementText;
-        }
+    //If the wrapper div doesn't exist, make one (eg, basic items div)
+    //If the item div doesn't exists, create one
+    if(!document.getElementById(passedItem.itemType + 'StockpileDiv')) {
+        let itemStockpileDiv = document.createElement('div');
+        itemStockpileDiv.id = passedItem.itemType + 'StockpileDiv';
+        stockpileDiv.appendChild(itemStockpileDiv);
     }
+
+    let itemStockpileDiv = document.getElementById(passedItem.itemType + 'StockpileDiv');
+    if(!document.getElementById(passedItem.itemType + 'ItemsHeader')) {
+        let header = document.createElement('p');
+        header.innerHTML = passedItem.itemType + ' Items';
+        header.id = passedItem.itemType + 'ItemsHeader';
+        itemStockpileDiv.appendChild(header);
+    }
+
+    if(!document.getElementById(passedItem.name + 'WrapperDiv')) {
+        let wrapper = document.createElement('div');
+        wrapper.id = passedItem.name + 'WrapperDiv';
+        wrapper.classList.add(passedItem.name)
+        itemStockpileDiv.appendChild(wrapper);
+    }
+
+    let itemWrapper = document.getElementById(passedItem.name + 'WrapperDiv');
+    itemWrapper.innerHTML = passedItem.name + ' : ' + itemInsideInventory.amount.toFixed(2);
 }
 
 
@@ -88,7 +62,7 @@ function update() {
     //update screen stuff
     // updateSkills();
     updateTickItems();
-    updateStockpile();
+    // updateStockpile();
     checkFocuses();
     checkNextSkills();
 

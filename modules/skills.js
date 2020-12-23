@@ -30,7 +30,7 @@ let skills = [
             } else {
                 playerFind(item.name).amount += Math.random() * 1;
             }
-            updateStockpile();
+            updateStockpile(item);
         }
     }, {
         name: 'Farming',
@@ -355,4 +355,8 @@ function updateSkills() {
     makeAttributeDiv(primaryAttributes);
 }
 
-export { skills, updateSkills, checkNextSkills, makeUniqueElementText, incrementSkill }
+function findSkillLevel(skill) {
+    return skills.find(skillName => skillName.name === skill);
+}
+
+export { skills, updateSkills, checkNextSkills, makeUniqueElementText, incrementSkill, findSkillLevel }

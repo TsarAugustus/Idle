@@ -3,8 +3,7 @@ import { craftingMaterials } from './items/craftingMaterials.js';
 import { basicMaterials } from './items/basicMaterials.js';
 import { animals } from './items/animals.js';
 import { craftableItems } from './items/craftableItems.js';
-
-import { Player, playerFind } from './player.js';
+// import { Wood } from './items/woods.js';
 let items = [];
 
 
