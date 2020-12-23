@@ -8,7 +8,6 @@ let craftCategories = {
         crafts: Wood.crafts,
         active: Wood.active
     },
-    // },
     Stone: {
         required: Stone.required,
         crafts: Stone.crafts,

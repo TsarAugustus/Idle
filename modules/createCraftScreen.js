@@ -86,7 +86,7 @@ function checkSubCraftRequirements(requirements) {
         } else if(req.items && checkItemRequirements(req.items)){
             subCraftContainer.push(true);
         }
-        // checkLevelRequirements()
+
         if(subCraftContainer.length === requirements.length) {
             return true;
         }
@@ -96,7 +96,6 @@ function checkSubCraftRequirements(requirements) {
 function addCraftableItems(craftName, craftType) {
     //find craftable items
     let itemsToAdd = subCraftFind(craftName, craftType);
-    // console.log(checkSubCraftRequirements(itemsToAdd.required));
     
     //remove previous wrapper
     if(document.getElementById('subCraftWrapper')) {
@@ -234,6 +233,11 @@ function checkLevelRequirements(skillToCheck) {
     let levelContainer = [];
     for(let levelRequirements of skillToCheck.level) {
         let skillLevel = findSkillLevel(levelRequirements.name);
+        if(!skillLevel) {
+            let craftingSkill = skills.find(skillName => skillName.name === 'Crafting');
+            let subSkill = craftingSkill.subCrafts.find(subCraft => subCraft.name === levelRequirements.name);
+            skillLevel = subSkill;
+        }
         if(skillLevel.level >= levelRequirements.level) {
             levelContainer.push(true);
         } 
@@ -257,7 +261,7 @@ function checkItemRequirements(itemsToCheck) {
     }
 }
 
-function checkCraftRequirements(craft){
+function checkCraftRequirements(craft) {
     let craftContainer = [];
     for(let req of craft) {
         if(req.level && checkLevelRequirements(req)) {
@@ -280,10 +284,27 @@ function addSecondaryCraftType(craft) {
         subCrafts.classList.add('activeCraftWrapper')
         document.getElementById('interaction').appendChild(subCrafts);
     }
+
     let subCraftType = craftFind(craft);
     let subCraftsDiv = document.getElementById('subCraftsDiv');
-    for(let type of Object.keys(subCraftType.crafts)) {
-        if(!document.getElementById(type)) {
+    for(let subType in subCraftType.crafts) {
+        let reqContainer = [];
+        for(let req of subCraftType.crafts[subType].required){
+            if(req.level && checkLevelRequirements(req)) {
+                reqContainer.push(true);
+            }
+            if(req.items && checkItemRequirements(req.items)) {
+                reqContainer.push(true);
+            }
+            if(reqContainer.length === Object.keys(req).length) {
+                subCraftType.crafts[subType].active = true;
+            }
+        }       
+    }
+    
+    for(let type in subCraftType.crafts) {
+        
+        if(!document.getElementById(type) && subCraftType.crafts[type].active) {
             let element = document.createElement('button');
             element.id = type;
             element.innerHTML = type;

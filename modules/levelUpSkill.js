@@ -17,4 +17,5 @@ export function levelUpSkill(skill) {
         }
     }
     updateAttributes(skill); 
+
 }

@@ -4,18 +4,14 @@ let Woodworking = {
             name: 'Foraging',
             level: 5
         }]
-    }, {
-        items: [{
-            name: 'Wood',
-            amount: 5
-        }]
     }],
+    active: false,
     crafts: [{
         name: 'Pole',
         type: 'Woodworking',
         itemType: 'Woodcrafting',
         special: {
-            XPReturn: 200
+            XPReturn: 15
         },
         requires: [{
             name: 'Wood',

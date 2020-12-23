@@ -91,7 +91,7 @@ let skills = [
         active: false,
         skillRequirements: [{
             name: 'Foraging',
-            level: 2
+            level: 5
         }],
         currentXP: 0,
         XPToLevel: 100,
