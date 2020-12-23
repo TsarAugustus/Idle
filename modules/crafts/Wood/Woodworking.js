@@ -13,7 +13,7 @@ let Woodworking = {
     crafts: [{
         name: 'Pole',
         type: 'Woodworking',
-        itemType: 'Woodcrafts',
+        itemType: 'Woodcrafting',
         special: {
             XPReturn: 200
         },

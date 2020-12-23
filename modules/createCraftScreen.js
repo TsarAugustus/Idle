@@ -1,6 +1,6 @@
 import { items, findItem } from './items.js';
 import { Player, playerFind } from './player.js';
-import { skills, makeUniqueElementText, findSkillLevel } from './skills.js';
+import { skills, makeUniqueElementText, findSkillLevel, updateProgressBar } from './skills.js';
 import { levelUpSkill } from './levelUpSkill.js';
 import { updateStockpile } from '../main.js';
 import { Crafts, craftFind, subCraftFind, craftCategories } from './Crafts.js';
@@ -56,6 +56,21 @@ function craftItem(item) {
         for(let itemToUpdate of item.requires) {
             updateStockpile(playerFind(itemToUpdate.name));
         }
+
+        let craftingSkill = skills.find(skill => skill.name === 'Crafting');
+        let subSkill = craftingSkill.subCrafts.find(sub => sub.name === item.itemType);
+        let subSkillDiv = document.getElementById(subSkill.name)
+
+        subSkill.currentXP += item.special.XPReturn;
+        if(subSkill.currentXP >= subSkill.XPToLevel) {
+            levelUpSkill(subSkill)
+        }
+        subSkillDiv.innerHTML = subSkill.name + '</br>Level ' + subSkill.level; 
+        let progressBar = document.createElement('div');
+        progressBar.id = subSkill.name + 'ProgressBar';
+        progressBar.classList.add('progressBar');
+        subSkillDiv.appendChild(progressBar);
+        updateProgressBar(subSkill);
         return true;
     } else {
         return false;
@@ -81,7 +96,7 @@ function checkSubCraftRequirements(requirements) {
 function addCraftableItems(craftName, craftType) {
     //find craftable items
     let itemsToAdd = subCraftFind(craftName, craftType);
-    console.log(checkSubCraftRequirements(itemsToAdd.required));
+    // console.log(checkSubCraftRequirements(itemsToAdd.required));
     
     //remove previous wrapper
     if(document.getElementById('subCraftWrapper')) {
@@ -188,10 +203,13 @@ export function createCraftScreen(args) {
     let typesOfCraftingDiv = document.createElement('div');
     typesOfCraftingDiv.id = 'typesOfCraftingDiv';
     wrapper.appendChild(typesOfCraftingDiv);
+    let craftingSkill = skills.find(skillName => skillName.name === 'Crafting');
     for(let craft of typesOfCrafting) {
+        let subSkill = craftingSkill.subCrafts.find(subSkill => subSkill.name === craft + 'crafting');
         let craftTypeButton = document.createElement('button');
-        craftTypeButton.id = craft + '-Crafting';
-        craftTypeButton.innerHTML = craft;
+        craftTypeButton.id = subSkill.name;
+        craftTypeButton.innerHTML = subSkill.name + '</br>Level ' + subSkill.level;
+
         craftTypeButton.onclick = function() {
             for(let el of document.getElementsByClassName('activeCraftWrapper')) {
                 while (el.hasChildNodes()) {
@@ -200,9 +218,16 @@ export function createCraftScreen(args) {
             }
             addSecondaryCraftType(craft);
         }
-        typesOfCraftingDiv.appendChild(craftTypeButton)
+        typesOfCraftingDiv.appendChild(craftTypeButton);
+        let progressBar = document.createElement('div');
+        progressBar.id = subSkill.name + 'ProgressBar';
+        progressBar.classList.add('progressBar');
+        craftTypeButton.appendChild(progressBar);
     }
     interactiveSkillDiv.appendChild(wrapper);
+    for(let craft of craftingSkill.subCrafts) {
+        updateProgressBar(craft);
+    }
 }
 
 function checkLevelRequirements(skillToCheck) {

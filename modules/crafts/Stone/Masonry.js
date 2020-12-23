@@ -13,7 +13,7 @@ let Masonry = {
     crafts: [{
         name: 'Chair',
         type: 'Masonry',
-        itemType: 'Stonecrafts',
+        itemType: 'Stonecrafting',
         special: {
             XPReturn: 5
         },

@@ -100,7 +100,19 @@ let skills = [
         uniqueSkill: true,
         uniqueSkillFunction: function() {
             createCraftScreen([craftableItems, craftingMaterials]);
-        }
+        },
+        subCrafts: [{
+            name: 'Woodcrafting',
+            level: 0,
+            currentXP: 0,
+            XPToLevel: 100,
+            type: ['INT', 'AGI', 'LOG']
+        }, {
+            name: 'Stonecrafting',
+            level: 0,
+            currentXP: 0,
+            XPToLevel: 100
+        }]
     },
     {
         name: 'Hunting',
@@ -202,9 +214,17 @@ function incrementSkill(skillInformation) {
 }
 
 function updateProgressBar(skillInformation) {
-    let progressWidth = (skillInformation.currentXP / skillInformation.XPToLevel) * 100;
     let progressBar = document.getElementById(skillInformation.name + 'ProgressBar');
-    progressBar.style.width = progressWidth + "%";
+    if(document.getElementById(skillInformation.name)){
+        if(!progressBar) {
+            let progressBar = document.createElement('div');
+            progressBar.id = skillInformation.name + 'ProgressBar';
+            progressBar.classList.add('progressBar');
+            document.getElementById(skillInformation.name).appendChild(progressBar);
+        }
+        let progressWidth = (skillInformation.currentXP / skillInformation.XPToLevel) * 100;
+        progressBar.style.width = progressWidth + "%";
+    }
 }
 
 function makeUniqueElementText(skillInformation) {
@@ -359,4 +379,4 @@ function findSkillLevel(skill) {
     return skills.find(skillName => skillName.name === skill);
 }
 
-export { skills, updateSkills, checkNextSkills, makeUniqueElementText, incrementSkill, findSkillLevel }
+export { skills, updateSkills, checkNextSkills, makeUniqueElementText, incrementSkill, findSkillLevel, updateProgressBar }
