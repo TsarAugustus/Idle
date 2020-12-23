@@ -106,7 +106,7 @@ let skills = [
             level: 0,
             currentXP: 0,
             XPToLevel: 100,
-            type: ['INT', 'AGI', 'LOG']
+            type: ['INT', 'AGI', 'LOG'],
         }, {
             name: 'Stonecrafting',
             level: 0,

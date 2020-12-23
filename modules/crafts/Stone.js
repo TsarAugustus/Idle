@@ -4,7 +4,7 @@ let Stone = {
         required: [{
             level: [{
                 name: 'Crafting',
-                level: 2
+                level: 10
             }],
         }, {
             items: [{
