@@ -1,7 +1,6 @@
-import { skills, checkNextSkills, updateSkills, incrementSkill } from './modules/skills.js';
-import { attributes, findAttributeLevel, findAttributeLongName, updateAttributes} from './modules/attributes.js';
-import { items, findItem } from './modules/items.js';
-import { Player, playerFind, updateTickItems } from './modules/player.js';
+import { checkNextSkills, updateSkills, incrementSkill } from './modules/skills.js';
+import { updateAttributes} from './modules/attributes.js';
+import { playerFind, updateTickItems } from './modules/player.js';
 
 //some variables for the focus buttons
 let focusAmount = 1;

@@ -1,9 +1,8 @@
-import { items, findItem } from './items.js';
 import { Player, playerFind } from './player.js';
 import { skills, makeUniqueElementText, findSkillLevel, updateProgressBar } from './skills.js';
 import { levelUpSkill } from './levelUpSkill.js';
 import { updateStockpile } from '../main.js';
-import { Crafts, craftFind, subCraftFind, craftCategories } from './Crafts.js';
+import { craftFind, subCraftFind, craftCategories } from './Crafts.js';
 
 //the craft item function will most likely be moved to a different module
 //a lot of skills will have interactive elements like this, so it might be good to
@@ -27,10 +26,8 @@ function craftItem(item) {
             playerFind(newItem.name).amount = newItem.amount;
 
         }
-        //if the item doesn't exist in the players Stockpile, add it
-        //I think I want to avoid the Stockpile, and instead have 
-        //the items count how many the player has, but seperation layers might help
-        // worthwhile to look into
+        
+        
         if(!playerFind(thisItem.name)) {
             Player.items.push({
                 name: thisItem.name,
@@ -59,8 +56,7 @@ function craftItem(item) {
 
         let craftingSkill = skills.find(skill => skill.name === 'Crafting');
         let subSkill = craftingSkill.subCrafts.find(sub => sub.name === item.itemType);
-        let subSkillDiv = document.getElementById(subSkill.name)
-
+        let subSkillDiv = document.getElementById(subSkill.name);
         subSkill.currentXP += item.special.XPReturn;
         if(subSkill.currentXP >= subSkill.XPToLevel) {
             levelUpSkill(subSkill)
@@ -71,9 +67,11 @@ function craftItem(item) {
         progressBar.classList.add('progressBar');
         subSkillDiv.appendChild(progressBar);
         updateProgressBar(subSkill);
-        // console.log(craftFind(subSkill.name.substr(0, subSkill.name.length - 8)))
-        // addSecondaryCraftType(craftFind(subSkill.name.substr(0, subSkill.name.length - 8)))
-        // addSecondaryCraftType(thisSubSkill)
+        
+        let toc = document.getElementById('typesOfCraftingDiv');
+        if(toc.childNodes.length < updatePotentialCrafts().length) {
+            updateTypesOfCraftingDiv(toc);
+        }
         addSecondaryCraftType(subSkill.name.substr(0, subSkill.name.length - 8));
         return true;
     } else {
@@ -82,20 +80,33 @@ function craftItem(item) {
     
 }
 
-function checkSubCraftRequirements(requirements) {
-    let subCraftContainer = [];
-    for(let req of requirements) {
-        if(req.level && checkLevelRequirements(req)) {
-            subCraftContainer.push(true);
-        } else if(req.items && checkItemRequirements(req.items)){
-            subCraftContainer.push(true);
-        }
+function updateTypesOfCraftingDiv(currentDivTypes) {
+    let updates = updatePotentialCrafts();
+    for(let craft of updates) {
+        if(!document.getElementById(craft + 'crafting')) {
+            let craftingSkill = skills.find(skillName => skillName.name === 'Crafting');
+            let subSkill = craftingSkill.subCrafts.find(subSkill => subSkill.name === craft + 'crafting');
+            let craftTypeButton = document.createElement('button');
+            craftTypeButton.id = subSkill.name;
+            craftTypeButton.innerHTML = subSkill.name + '</br>Level ' + subSkill.level;
 
-        if(subCraftContainer.length === requirements.length) {
-            return true;
+            craftTypeButton.onclick = function() {
+                for(let el of document.getElementsByClassName('activeCraftWrapper')) {
+                    while (el.hasChildNodes()) {
+                        document.getElementById(el.id).removeChild(document.getElementById(el.id).lastChild);
+                    }
+                }
+                addSecondaryCraftType(craft);
+            }
+            typesOfCraftingDiv.appendChild(craftTypeButton);
+            let progressBar = document.createElement('div');
+            progressBar.id = subSkill.name + 'ProgressBar';
+            progressBar.classList.add('progressBar');
+            craftTypeButton.appendChild(progressBar);
+            document.getElementById('typesOfCraftingDiv').appendChild(craftTypeButton)
         }
     }
-}
+}   
 
 function addCraftableItems(craftName, craftType) {
     //find craftable items
@@ -204,35 +215,15 @@ export function createCraftScreen(args) {
     wrapper.id = 'interaction';
 
 
-    //first, create the types of crafting buttons (wood, bone, rock, metal)
-    
-    
+    //first, create the types of crafting buttons (wood, bone, rock, metal)    
     let typesOfCraftingDiv = document.createElement('div');
     typesOfCraftingDiv.id = 'typesOfCraftingDiv';
     wrapper.appendChild(typesOfCraftingDiv);
     let craftingSkill = skills.find(skillName => skillName.name === 'Crafting');
     let typesOfCrafting = updatePotentialCrafts();
-    for(let craft of typesOfCrafting) {
-        let subSkill = craftingSkill.subCrafts.find(subSkill => subSkill.name === craft + 'crafting');
-        let craftTypeButton = document.createElement('button');
-        craftTypeButton.id = subSkill.name;
-        craftTypeButton.innerHTML = subSkill.name + '</br>Level ' + subSkill.level;
-
-        craftTypeButton.onclick = function() {
-            for(let el of document.getElementsByClassName('activeCraftWrapper')) {
-                while (el.hasChildNodes()) {
-                    document.getElementById(el.id).removeChild(document.getElementById(el.id).lastChild);
-                }
-            }
-            addSecondaryCraftType(craft);
-        }
-        typesOfCraftingDiv.appendChild(craftTypeButton);
-        let progressBar = document.createElement('div');
-        progressBar.id = subSkill.name + 'ProgressBar';
-        progressBar.classList.add('progressBar');
-        craftTypeButton.appendChild(progressBar);
-    }
     interactiveSkillDiv.appendChild(wrapper);
+    updateTypesOfCraftingDiv()
+
     for(let craft of craftingSkill.subCrafts) {
         updateProgressBar(craft);
     }
@@ -287,7 +278,6 @@ function checkCraftRequirements(craft) {
 }
 
 function addSecondaryCraftType(craft) {
-    console.log(craft)
     if(!document.getElementById('subCraftsDiv')) {
         let subCrafts = document.createElement('div');
         subCrafts.id = 'subCraftsDiv';

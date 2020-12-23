@@ -3,14 +3,9 @@ import { Masonry } from './Stone/Masonry.js';
 let Stone = {
         required: [{
             level: [{
-                name: 'Crafting',
-                level: 10
+                name: 'Woodcrafting',
+                level: 2
             }],
-        }, {
-            items: [{
-                name: 'Stone',
-                amount: 10
-            }]
         }],
         active: false,
         crafts: {

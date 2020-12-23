@@ -111,7 +111,8 @@ let skills = [
             name: 'Stonecrafting',
             level: 0,
             currentXP: 0,
-            XPToLevel: 100
+            XPToLevel: 100,
+            type: ['STR', 'INT']
         }]
     },
     {
