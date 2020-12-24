@@ -34,6 +34,19 @@ let Flintknapping = {
             name: 'Stone',
             amount: 1
         }]
+    }, {
+        name: 'Handhoe',
+        type: 'Flintknapping',
+        itemType: 'Stonecrafting',
+        toolType: 'Hoe',
+        active: false,
+        special: {
+            XPReturn: 15
+        },
+        requires: [{
+            name: 'Stone',
+            amount: 1
+        }]
     }]
 }
 

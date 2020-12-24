@@ -58,9 +58,8 @@ let skills = [
         name: 'Farming',
         type: ['WIL', 'STR', 'AGI'],
         level: 0,
-        skillRequirements: [{
-            name: 'Foraging',
-            level: 2
+        itemRequirements: [{
+            toolType: 'Hoe'
         }],
         active: false,
         currentXP: 0,
@@ -209,6 +208,9 @@ function checkNextSkills() {
             numToMatch += skill.itemRequirements.length;
             for(let reqItem of skill.itemRequirements) {
                 for(let item of Player.items) {
+                    if(!reqItem.name && reqItem.toolType === item.toolType) {
+                        arrayToMatch.push(true)
+                    }
                     if(item.name === reqItem.name && item.amount >= reqItem.amount) {
                         arrayToMatch.push(true);
                     }
