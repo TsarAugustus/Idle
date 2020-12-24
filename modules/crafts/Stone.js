@@ -1,10 +1,11 @@
 import { Masonry } from './Stone/Masonry.js';
+import { Flintknapping } from './Stone/Flintknapping.js';
 
 let Stone = {
         required: [{
             level: [{
-                name: 'Woodcrafting',
-                level: 2
+                name: 'Crafting',
+                level: 1
             }],
         }],
         active: false,
@@ -12,7 +13,11 @@ let Stone = {
             Masonry: {
             required: Masonry.required,
             crafts: Masonry.crafts,
-        }
+        },
+        Flintknapping: {
+            required: Flintknapping.required,
+            crafts: Flintknapping.crafts
+        }        
     }
 };
 

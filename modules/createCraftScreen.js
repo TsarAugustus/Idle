@@ -80,7 +80,7 @@ function craftItem(item) {
     
 }
 
-function updateTypesOfCraftingDiv(currentDivTypes) {
+function updateTypesOfCraftingDiv() {
     let updates = updatePotentialCrafts();
     for(let craft of updates) {
         if(!document.getElementById(craft + 'crafting')) {
@@ -128,7 +128,7 @@ function addCraftableItems(craftName, craftType) {
     
     // let wrapper = document.getElementById('subCraftWrapper');
     for(let craft of itemsToAdd.crafts) {
-        if(!document.getElementById(craft.name.replace(/\s/g, '') + 'CraftButton')) {
+        if(!document.getElementById(craft.name.replace(/\s/g, '') + 'CraftButton') && craft.active) {
             let element = document.createElement('button');
             element.id = craft.name.replace(/\s/g, '') + 'CraftButton';
             element.name = craft.name.replace(/\s/g, '-');
@@ -148,7 +148,7 @@ function addCraftableItems(craftName, craftType) {
                     let progressWidth = (crafting.currentXP / crafting.XPToLevel) * 100;
                     let progressBar = document.getElementById(crafting.name + 'ProgressBar');
                     progressBar.style.width = progressWidth + "%";
-
+                    addCraftableItems(craftName, craftType);
                 }
             }
             wrapper.appendChild(element);

@@ -33,7 +33,7 @@ export let basicMaterials = [{
         amount: null
     }]
 }, {
-    name: 'Wood',
+    name: 'Bark',
     type: 'Solid',
     itemType: 'Basic',
     requires: [{

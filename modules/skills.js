@@ -1,4 +1,4 @@
-import { attributes, findAttributeLevel, updateAttributes} from './attributes.js';
+import { attributes, findAttributeLevel } from './attributes.js';
 import { basicMaterials } from './items/basicMaterials.js';
 import { createCraftScreen } from './createCraftScreen.js';
 import { craftableItems } from './items/craftableItems.js';
@@ -105,13 +105,13 @@ let skills = [
             name: 'Woodcrafting',
             level: 0,
             currentXP: 0,
-            XPToLevel: 100,
+            XPToLevel: 50,
             type: ['INT', 'AGI', 'LOG'],
         }, {
             name: 'Stonecrafting',
             level: 0,
             currentXP: 0,
-            XPToLevel: 100,
+            XPToLevel: 160,
             type: ['STR', 'INT']
         }]
     },

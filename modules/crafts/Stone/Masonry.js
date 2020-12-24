@@ -4,11 +4,6 @@ let Masonry = {
             name: 'Crafting',
             level: 8
         }]
-    }, {
-        items: [{
-            name: 'Stone',
-            amount: 5
-        }]
     }],
     crafts: [{
         name: 'Chair',

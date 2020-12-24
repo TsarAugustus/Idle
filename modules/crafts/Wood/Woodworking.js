@@ -7,15 +7,15 @@ let Woodworking = {
     }],
     active: false,
     crafts: [{
-        name: 'Pole',
+        name: 'Wood',
         type: 'Woodworking',
         itemType: 'Woodcrafting',
         special: {
             XPReturn: 15
         },
         requires: [{
-            name: 'Wood',
-            amount: 1
+            name: 'Bark',
+            amount: 2
         }]
     }]
 }
