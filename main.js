@@ -13,14 +13,14 @@ function updateStockpile(passedItem) {
             
     //If the wrapper div doesn't exist, make one (eg, basic items div)
     //If the item div doesn't exists, create one
-    if(!document.getElementById(passedItem.itemType + 'StockpileDiv')) {
+    if(!document.getElementById(passedItem.itemType + 'StockpileDiv') && passedItem.itemType != undefined) {
         let itemStockpileDiv = document.createElement('div');
         itemStockpileDiv.id = passedItem.itemType + 'StockpileDiv';
         stockpileDiv.appendChild(itemStockpileDiv);
     }
 
     let itemStockpileDiv = document.getElementById(passedItem.itemType + 'StockpileDiv');
-    if(!document.getElementById(passedItem.itemType + 'ItemsHeader')) {
+    if(!document.getElementById(passedItem.itemType + 'ItemsHeader')&& passedItem.itemType != undefined) {
         let header = document.createElement('p');
         header.innerHTML = passedItem.itemType + ' Items';
         header.id = passedItem.itemType + 'ItemsHeader';
