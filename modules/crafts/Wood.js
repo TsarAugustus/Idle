@@ -5,7 +5,7 @@ let Wood = {
         required: [{
             level: [{
                 name: 'Crafting',
-                level: 3
+                level: 1
             }],
         }],
         active: false,

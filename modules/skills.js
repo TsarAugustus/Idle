@@ -20,12 +20,34 @@ let skills = [
         XPPerSuccess: 50,
         XPAttributeInc: 'WIL',
         specialSuccessFunction: function() {
-            let item = basicMaterials[Math.floor(Math.random() * basicMaterials.length)]
+
+            let tools = [{
+                name: 'Axe',
+                func: Player.items.filter(itemName => itemName.toolType === 'Axe'),
+                remove: 'Bark'
+            }, {
+                name: 'Shovel',
+                func: Player.items.filter(itemName => itemName.toolType === 'Shovel'),
+                remove: 'Clay'
+            }, {
+                name: 'Shear',
+                func: Player.items.filter(itemName => itemName.toolType === 'Shear'),
+                remove: 'Leaves'
+            }];
+            let itemList = basicMaterials;
+            for(let tool of tools) {
+                if(!tool.func.length) {
+                    let newBasicMaterials = itemList.filter(nBM => nBM.name != tool.remove);
+                    itemList = newBasicMaterials;
+                }
+            }
+            let item = itemList[Math.floor(Math.random() * itemList.length)];
+
             if(!playerFind(item.name)) {
                 Player.items.push({
                     name: item.name,
                     amount: Math.random() * 1,
-                    itemType: item.itemType
+                    toolType: item.toolType
                 });
             } else {
                 playerFind(item.name).amount += Math.random() * 1;

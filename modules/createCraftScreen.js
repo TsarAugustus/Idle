@@ -32,7 +32,8 @@ function craftItem(item) {
             Player.items.push({
                 name: thisItem.name,
                 amount: 1,
-                special: thisItem.special
+                special: thisItem.special,
+                toolType: thisItem.toolType
             });
         } else {
             let item = playerFind(thisItem.name);
@@ -122,11 +123,10 @@ function addCraftableItems(craftName, craftType) {
 
     //remake wrapper
     let wrapper = document.createElement('div');
-    wrapper.id = 'subCraftWrapper'
-    wrapper.classList.add('activeCraftWrapper');
-    document.getElementById('interaction').appendChild(wrapper);
+    wrapper.id = 'subCraftWrapper';
     
-    // let wrapper = document.getElementById('subCraftWrapper');
+    document.getElementById('subCraftsDiv').appendChild(wrapper);
+
     for(let craft of itemsToAdd.crafts) {
         if(!document.getElementById(craft.name.replace(/\s/g, '') + 'CraftButton') && craft.active) {
             let element = document.createElement('button');
@@ -281,10 +281,9 @@ function addSecondaryCraftType(craft) {
     if(!document.getElementById('subCraftsDiv')) {
         let subCrafts = document.createElement('div');
         subCrafts.id = 'subCraftsDiv';
-        subCrafts.classList.add('activeCraftWrapper')
         document.getElementById('interaction').appendChild(subCrafts);
     }
-
+    
     let subCraftType = craftFind(craft);
     let subCraftsDiv = document.getElementById('subCraftsDiv');
     for(let subType in subCraftType.crafts) {
@@ -309,6 +308,8 @@ function addSecondaryCraftType(craft) {
             element.id = type;
             element.innerHTML = type;
             element.onclick = function() {
+                subCraftsDiv.style.className = '';
+                subCraftsDiv.classList.add('activeCraftWrapper');
                 addCraftableItems(craft, type);
             }
             subCraftsDiv.appendChild(element);

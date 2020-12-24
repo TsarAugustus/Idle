@@ -9,6 +9,7 @@ let Flintknapping = {
         name: 'Hammerstone',
         type: 'Flintknapping',
         itemType: 'Stonecrafting',
+        toolType: 'Hammer',
         active: false,
         special: {
             XPReturn: 5
@@ -21,6 +22,7 @@ let Flintknapping = {
         name: 'Handaxe',
         type: 'Flintknapping',
         itemType: 'Stonecrafting',
+        toolType: 'Axe',
         active: false,
         special: {
             XPReturn: 10
