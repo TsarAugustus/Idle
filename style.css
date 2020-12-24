@@ -134,6 +134,7 @@ body {
 }
 
 #subCraftWrapper {
+    display: flex;
     /* padding-top: 2em; */
 }
 

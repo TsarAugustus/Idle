@@ -35,7 +35,7 @@ function updateStockpile(passedItem) {
     }
 
     let itemWrapper = document.getElementById(passedItem.name + 'WrapperDiv');
-    itemWrapper.innerHTML = passedItem.name + ' : ' + itemInsideInventory.amount.toFixed(2);
+    itemWrapper.innerHTML = passedItem.name + ' : ' + Math.floor(itemInsideInventory.amount * 10) / 10;
 }
 
 

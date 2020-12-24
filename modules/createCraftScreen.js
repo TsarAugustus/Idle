@@ -13,7 +13,7 @@ function craftItem(item) {
     let thisItem = item;
     for(let req of thisItem.requires) {
         let reqItem = playerFind(req.name);
-        if(reqItem.amount >= req.amount) {
+        if(Math.floor(reqItem.amount * 100) / 100 >= req.amount) {
             newItemStockpile.push({
                 name: req.name,
                 amount: reqItem.amount - req.amount
@@ -25,21 +25,32 @@ function craftItem(item) {
         for(let newItem of newItemStockpile) {
             playerFind(newItem.name).amount = newItem.amount;
 
-        }
-        
+        }        
         
         if(!playerFind(thisItem.name)) {
-            Player.items.push({
+            let itemToPush = {
                 name: thisItem.name,
-                amount: 1,
                 special: thisItem.special,
-                toolType: thisItem.toolType
-            });
+                toolType: thisItem.toolType,
+                toolQuality: thisItem.toolQuality
+            }
+
+            if(thisItem.special.returnAmt){
+                itemToPush.amount = thisItem.special.returnAmt;
+            } else {
+                itemToPush.amount = 1;
+            }
+            Player.items.push(itemToPush);
+
         } else {
             let item = playerFind(thisItem.name);
-            item.amount++;
+            if(thisItem.special.returnAmt) {
+                item.amount += thisItem.special.returnAmt;
+            } else {
+                item.amount++;
+            }
             //this only applies to things like Fires and rainwaterBarrells
-            if(item.special.inc) {
+            if(item.special && item.special.inc) {
                 if(thisItem.special.inc < 0) {
                     thisItem.special.inc = -1 / item.amount;
                     thisItem.special.max = 100 * item.amount;

@@ -18,34 +18,52 @@ let Flintknapping = {
             name: 'Stone',
             amount: 2
         }]
+    },{
+        name: 'Knapped-Stone',
+        type: 'Flintknapping',
+        itemType: 'Stonecrafting',
+        active: false,
+        special: {
+            XPReturn: 5,
+            returnAmt: 0.5
+        },
+        requires: [{
+            name: 'Hammerstone',
+            amount: 0.1
+        }]
     }, {
         name: 'Handaxe',
         type: 'Flintknapping',
         itemType: 'Stonecrafting',
         toolType: 'Axe',
+        toolQuality: 1,
         active: false,
         special: {
             XPReturn: 10
         },
         requires: [{
+            name: 'Knapped-Stone',
+            amount: 1
+        }, {
             name: 'Hammerstone',
             amount: 0.1
-        }, {
-            name: 'Stone',
-            amount: 1
         }]
     }, {
         name: 'Handhoe',
         type: 'Flintknapping',
         itemType: 'Stonecrafting',
-        toolType: 'Hoe',
+        toolType: 'Pick',
+        toolQuality: 2,
         active: false,
         special: {
             XPReturn: 15
         },
         requires: [{
-            name: 'Stone',
+            name: 'Knapped-Stone',
             amount: 1
+        }, {
+            name: 'Hammerstone',
+            amount: 0.1
         }]
     }]
 }

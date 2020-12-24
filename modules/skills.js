@@ -20,24 +20,11 @@ let skills = [
         XPPerSuccess: 50,
         XPAttributeInc: 'WIL',
         specialSuccessFunction: function() {
-
-            let tools = [{
-                name: 'Axe',
-                func: Player.items.filter(itemName => itemName.toolType === 'Axe'),
-                remove: 'Bark'
-            }, {
-                name: 'Shovel',
-                func: Player.items.filter(itemName => itemName.toolType === 'Shovel'),
-                remove: 'Clay'
-            }, {
-                name: 'Shear',
-                func: Player.items.filter(itemName => itemName.toolType === 'Shear'),
-                remove: 'Leaves'
-            }];
             let itemList = basicMaterials;
-            for(let tool of tools) {
-                if(!tool.func.length) {
-                    let newBasicMaterials = itemList.filter(nBM => nBM.name != tool.remove);
+            for(let material of itemList) {
+                // console.log(material)
+                if(material.reqToolType && material.reqToolType != Player.items.filter(itemName => itemName.toolType === material.reqToolType)) {
+                    let newBasicMaterials = itemList.filter(nBM => nBM.name != material.name);
                     itemList = newBasicMaterials;
                 }
             }
@@ -50,7 +37,13 @@ let skills = [
                     toolType: item.toolType
                 });
             } else {
-                playerFind(item.name).amount += Math.random() * 1;
+                console.log(item)
+                let highestQualityTool = findHighestQualityTool(item.toolTypeInc);
+                if(item.toolTypeInc && highestQualityTool != 0) {
+                    playerFind(item.name).amount += Math.random() * highestQualityTool.toolQuality + 1;
+                } else {
+                    playerFind(item.name).amount += Math.random() * 1;
+                }
             }
             updateStockpile(item);
         }
@@ -167,10 +160,22 @@ let skills = [
         XPPerSuccess: 50,
         XPAttributeInc: 'STR',
         specialSuccessFunction: function() {
-            let item = {
-                name: 'Wood',
-                type: 'Woodworking',
-                itemType: 'Woodcrafting'
+            //TODO: make different types of wood that can be collected based on tooltype
+            //currently is only bark and wood
+            let highestQualityTool = findHighestQualityTool('Axe'); 
+            let item;
+            if(highestQualityTool.toolQuality < 2) {
+                item = {
+                    name: 'Bark',
+                    type: 'Woodworking',
+                    itemType: 'Basic'
+                }
+            } else {
+                item = {
+                    name: 'Wood',
+                    type: 'Woodworking',
+                    itemType: 'Woodcrafting'
+                }
             }
 
             if(!playerFind(item.name)) {
@@ -189,6 +194,18 @@ let skills = [
 ];
 
 let activeAttributeWrapper;
+
+function findHighestQualityTool(toolType) {
+    let tool = Player.items.filter(el => el.toolType === toolType);
+    let highestQualityTool = 0;
+    if(toolType && tool.length > 0) {
+        highestQualityTool = tool.reduce(function(a, b) {
+            console.log(a, b)
+            Math.max(a.toolQuality, b.toolQuality);
+        });
+    }
+    return highestQualityTool;
+}
 
 function checkNextSkills() {
     //might be useful to have an array of active skills to match against, and update that container
@@ -273,7 +290,7 @@ function incrementSkill(skillInformation) {
 
 function updateProgressBar(skillInformation) {
     let progressBar = document.getElementById(skillInformation.name + 'ProgressBar');
-    if(document.getElementById(skillInformation.name)){
+    if(document.getElementById(skillInformation.name)) {
         if(!progressBar) {
             let progressBar = document.createElement('div');
             progressBar.id = skillInformation.name + 'ProgressBar';
