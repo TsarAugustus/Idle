@@ -12,7 +12,7 @@ let Flintknapping = {
         toolType: 'Hammer',
         active: false,
         special: {
-            XPReturn: 5
+            XPReturn: 100
         },
         requires: [{
             name: 'Stone',

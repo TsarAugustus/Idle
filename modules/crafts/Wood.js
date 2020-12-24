@@ -5,8 +5,12 @@ let Wood = {
         required: [{
             level: [{
                 name: 'Crafting',
-                level: 1
+                level: 2
             }],
+            items: [{
+                name: 'Bark',
+                amount: 2
+            }]
         }],
         active: false,
         crafts: {

@@ -153,6 +153,39 @@ let skills = [
         XPToLevel: 100,
         XPPerSuccess: 50,
         XPAttributeInc: 'SPE'
+    },
+    {
+        name: 'Woodcutting',
+        type: ['STR', 'END'],
+        level: 0,
+        active: false,
+        itemRequirements: [{
+            name: 'Handaxe',
+            amount: 1
+        }],
+        currentXP: 0,
+        XPToLevel: 160,
+        XPPerSuccess: 50,
+        XPAttributeInc: 'STR',
+        specialSuccessFunction: function() {
+            let item = {
+                name: 'Wood',
+                type: 'Woodworking',
+                itemType: 'Woodcrafting'
+            }
+
+            if(!playerFind(item.name)) {
+                Player.items.push({
+                    name: item.name,
+                    amount: Math.random() * 1,
+                    itemType: item.itemType,
+                    type: item.type
+                });
+            } else {
+                playerFind(item.name).amount += Math.random() * 1;
+            }
+            updateStockpile(item);
+        }
     }
 ];
 
@@ -200,7 +233,7 @@ function checkNextSkills() {
         if(arrayToMatch.length === numToMatch) {
             skill.active = true;
             skill.level = 1;
-            if(skill.type[0] === activeAttributeWrapper) {
+            if(skill.type[0] === activeAttributeWrapper || activeAttributeWrapper === 'All') {
                 makeSkillDiv([skill]);
             }
         }
@@ -316,7 +349,7 @@ function makeFocusButton(thisSkill) {
 
 function makeSkillDiv(skillsToMake) {
     let thisSkill = skillsToMake[0];
-    if(thisSkill && thisSkill.type[0] === activeAttributeWrapper && thisSkill && !document.getElementById(thisSkill.name + 'Wrapper')) {
+    if(thisSkill && thisSkill && !document.getElementById(thisSkill.name + 'Wrapper')) {
         let wrapper = document.createElement('div');
         wrapper.id = thisSkill.name + 'Wrapper';
         wrapper.classList.add('skill');
@@ -382,14 +415,23 @@ function makeAttributeDiv(primaryAttributes) {
         while(previousSkillWrappers[0]) {
             previousSkillWrappers[0].parentNode.removeChild(previousSkillWrappers[0]);
         }
-        let skillFilter = skills.filter(skill => skill.type[0] === thisAttribute.name && skill.active);
-        makeSkillDiv(skillFilter);
+        if(thisAttribute.name === 'All') {
+            let skillFilter = skills.filter(skill => skill.active);
+            makeSkillDiv(skillFilter);
+        } else {
+            let skillFilter = skills.filter(skill => skill.type[0] === thisAttribute.name && skill.active);
+            makeSkillDiv(skillFilter);
+        }
     }
     skillAttributeWrapper.appendChild(element);
     primaryAttributes.shift();
-
+    console.log()
     if(primaryAttributes.length > 0) {
         makeAttributeDiv(primaryAttributes)
+    } else if (primaryAttributes.length === 0 && document.getElementsByClassName('attributeSkillDiv').length === 9) {
+        makeAttributeDiv([{
+            name: 'All'
+        }])
     }
 }
 

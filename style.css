@@ -155,6 +155,10 @@ body {
     justify-items: flex-start;
 }
 
+div {
+    color: red;
+}
+
 .attributeSkillDiv {
     outline: none;
     text-align: center;
